@@ -1,0 +1,24 @@
+{
+  "name": "ntb-sticker-supafinding",
+  "private": true,
+  "version": "1.0.0",
+  "description": "NTB Sticker Supafinding - Full Stack Application",
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "build:frontend": "cd frontend && npm run build",
+    "install:frontend": "cd frontend && npm install",
+    "install:backend": "cd backend && npm install",
+    "install:all": "npm run install:frontend && npm run install:backend"
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/ntb-sticker-supafinding.git"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}
