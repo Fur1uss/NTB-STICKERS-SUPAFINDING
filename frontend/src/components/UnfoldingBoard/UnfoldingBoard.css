@@ -1,0 +1,48 @@
+.unfolding-board {
+  position: fixed;
+  top: 0%;
+  left: 50%;
+  transform: translateX(-64.6%);
+  width: 70vw;
+  height: 0;
+  overflow: hidden;
+  background: url('/loadingScreen.webp') center/cover no-repeat;
+  z-index: 1000;
+  transition: height 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unfolding-board.open {
+  height: 90vh;
+}
+
+.unfolding-board-content {
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.3s 0.3s;
+  width: 87%;
+  height: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unfolding-board.open .unfolding-board-content {
+  opacity: 1;
+} 
+
+.unfolding-board-close{
+  position: absolute;
+  top: 5%;
+  right: 6%;
+  width: 4vw;
+  height: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}

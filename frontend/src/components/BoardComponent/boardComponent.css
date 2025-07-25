@@ -1,6 +1,6 @@
 .boardContainer {
     width: 65vw;
-    height: 70vh;
+    height: 80vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -8,7 +8,7 @@
 
     z-index: 1;
     position: absolute;
-    top: 10%;
+    top: 5%;
     left: 7%;
 
     background-image: url("/board.webp"); ;
@@ -19,13 +19,12 @@
 
 .boardDyinamicContainer{
     width: 91%;
-    height: 93%;
+    height: 86%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
 
-    background-color: blue;
 
     padding: 20px;
 

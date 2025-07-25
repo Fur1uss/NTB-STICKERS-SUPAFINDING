@@ -20,5 +20,8 @@
     "url": "https://github.com/your-username/ntb-sticker-supafinding.git"
   },
   "author": "Your Name",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "react-router-dom": "^7.7.1"
+  }
 }

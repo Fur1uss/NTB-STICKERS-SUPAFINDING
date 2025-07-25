@@ -1,0 +1,86 @@
+.game-info-container {
+  padding: 1.5rem 2rem;
+  margin: 1rem 0;
+  color: #222;
+  width: 100%;
+  height: 100%;
+}
+
+.game-info-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.game-info-text {
+  margin: 0;
+  font-size: 1.1rem;
+} 
+
+.titleContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  height: 25%;
+}
+
+.titleContainer img{
+  width: 70%;
+  height: auto;
+}
+
+.instructionsContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  height: 50%;
+}
+
+.instructionsContainer img{
+  width: 60%;
+  height: auto;
+}
+
+.playButtonContainer{
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  height: 25%;
+}
+
+.playButtonContainer img{
+  width: 30%;
+  height: auto;
+  margin-left: 15%;
+}
+
+.playButtonContainer img{
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.playButtonContainer img:hover{
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 0 white)
+  drop-shadow(1px 0 0 white)
+  drop-shadow(-1px 0 0 white)
+  drop-shadow(0 1px 0 white)
+  drop-shadow(0 -1px 0 white);
+}
+
+.stickerDecoration{
+  position: absolute;
+  object-fit: contain;
+
+  width: 40% !important;
+  height: auto !important;
+
+  left: 53%;
+}
