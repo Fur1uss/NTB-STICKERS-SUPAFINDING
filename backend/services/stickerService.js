@@ -157,21 +157,28 @@ export class StickerService {
    * @returns {Array} Lista de stickers
    */
   static async getAllStickers() {
-    console.log('\n📋 OBTENIENDO TODOS LOS STICKERS DE LA DB');
+    console.log('\n📋 OBTENIENDO STICKERS ALEATORIOS DE LA DB (LÍMITE: 150)');
     
     try {
+      // PostgreSQL usa RANDOM() para ordenamiento aleatorio
       const { data: stickers, error } = await supabase
         .from('stickers')
         .select('*')
-        .order('id');
+        .order('id', { ascending: false }) // Orden descendente primero
+        .limit(150); // Limitar a 150 stickers
 
       if (error) {
         console.error('❌ Error al obtener stickers:', error);
         throw error;
       }
 
-      console.log('✅ Stickers obtenidos:', stickers.length);
-      return stickers;
+      // Mezclar aleatoriamente en el backend para mayor variabilidad
+      const shuffledStickers = stickers.sort(() => Math.random() - 0.5);
+
+      console.log('✅ Stickers obtenidos y mezclados:', shuffledStickers.length);
+      console.log('🔀 Primeros 5 IDs:', shuffledStickers.slice(0, 5).map(s => s.id));
+      
+      return shuffledStickers;
 
     } catch (error) {
       console.error('❌ Error en getAllStickers:', error);

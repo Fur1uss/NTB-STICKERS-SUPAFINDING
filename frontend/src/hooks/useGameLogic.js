@@ -112,10 +112,10 @@ export const useGameLogic = (userId) => {
 
       console.log('🎯 Stickers únicos por nombre:', stickersByName.size);
 
-      // Obtener archivos del bucket para visualización
+      // Obtener archivos del bucket para visualización (límite optimizado)
       const { data: files, error: listError } = await supabase.storage
         .from('stickers')
-        .list('', { limit: 200, offset: 0 });
+        .list('', { limit: 150, offset: 0 });
 
       if (listError) throw listError;
 
@@ -187,8 +187,12 @@ export const useGameLogic = (userId) => {
           placedStickers.push({ x, y, scale });
         });
 
-      setStickerImages(visualStickers);
-      console.log(`✅ ${visualStickers.length} stickers configurados`);
+      // Mezcla adicional en el frontend para máxima aleatoriedad
+      const finalShuffledStickers = visualStickers.sort(() => Math.random() - 0.5);
+      
+      setStickerImages(finalShuffledStickers);
+      console.log(`✅ ${finalShuffledStickers.length} stickers configurados y mezclados`);
+      console.log('🔀 Variedad de stickers:', finalShuffledStickers.slice(0, 3).map(s => s.name));
 
     } catch (error) {
       console.error('❌ Error configurando stickers visuales:', error);
