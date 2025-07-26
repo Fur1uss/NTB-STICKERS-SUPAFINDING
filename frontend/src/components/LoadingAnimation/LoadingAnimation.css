@@ -1,0 +1,19 @@
+/* LoadingAnimation.css */
+.loading-animation-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.loading-frame-large {
+  width: 60%;
+  height: auto;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+  animation: pulseFrame 1.6s infinite ease-in-out;
+}
+
+

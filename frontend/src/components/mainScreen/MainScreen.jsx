@@ -4,7 +4,6 @@ import supabase from "../../config/supabaseClient";
 import './mainScreen.css';
 import { useNavigate } from "react-router-dom";
 
-import JustAPlantComponent from "../../justAPlantComponent/JustAPlantComponent";
 import UnfoldingBoard from "../UnfoldingBoard/UnfoldingBoard";
 import GameInfoComponent from "../GameInfoComponent/GameInfoComponent";
 

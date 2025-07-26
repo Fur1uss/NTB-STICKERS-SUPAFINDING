@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import supabase from "../../config/supabaseClient";
 import { 
+  syncStickersFromBucket, 
   getAllStickersFromDB, 
   getRandomTargetSticker 
 } from "../../utils/gameUtils";
@@ -71,18 +72,43 @@ const PlayScreen = ({ imageUrls = [], onGameReady }) => {
   // Función para inicializar el juego
   const initializeGame = useCallback(async () => {
     try {
+      console.log('🎮 Iniciando inicialización del juego...');
       setLoading(true);
       
-      // 1. Obtener todos los stickers de la DB
-      const dbStickers = await getAllStickersFromDB();
+      // 1. Obtener usuario actual de la sesión (ya debe estar autenticado)
+      console.log('📋 Verificando sesión de usuario...');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        throw new Error('Usuario no autenticado. Por favor inicia sesión.');
+      }
+      console.log('✅ Usuario autenticado:', session.user.email);
       
-      // 2. Crear el mapa de stickers con sus IDs de la DB
+      // 2. Usar la misma función que MainScreen para obtener/crear usuario
+      console.log('🔍 Obteniendo usuario de la base de datos...');
+      const userData = await createOrGetUser();
+      console.log('✅ Usuario obtenido:', userData.username);
+      
+      setCurrentUser(userData);
+      
+      // 3. Sincronizar stickers del bucket con la DB
+      console.log('🎨 Sincronizando stickers...');
+      await syncStickersFromBucket(userData.id);
+      
+      // 4. Obtener todos los stickers de la DB
+      console.log('🗂️ Obteniendo stickers de la base de datos...');
+      const dbStickers = await getAllStickersFromDB();
+      console.log('🗂️ Stickers obtenidos:', dbStickers.length);
+      
+      // 5. Crear el mapa de stickers con sus IDs de la DB
+      console.log('🗺️ Creando mapa de stickers...');
       const stickerMap = new Map();
       dbStickers.forEach(sticker => {
         stickerMap.set(sticker.namesticker, sticker);
       });
+      console.log('🗺️ Mapa de stickers creado con', stickerMap.size, 'elementos');
       
-      // 3. Obtener archivos del bucket para la visualización
+      // 6. Obtener archivos del bucket para la visualización
+      console.log('📦 Obteniendo archivos del bucket de storage...');
       const { data: files, error: listError } = await supabase.storage
         .from('stickers')
         .list('', {
@@ -91,10 +117,13 @@ const PlayScreen = ({ imageUrls = [], onGameReady }) => {
         });
 
       if (listError) {
+        console.error('❌ Error al obtener archivos del bucket:', listError);
         throw listError;
       }
+      console.log('📦 Archivos obtenidos del bucket:', files?.length || 0);
 
-      // 4. Generar URLs y asociar con IDs de la DB
+      // 7. Generar URLs y asociar con IDs de la DB
+      console.log('🔗 Generando URLs y asociando con IDs de la DB...');
       const imageUrls = [];
       const placedStickers = [];
       
@@ -169,18 +198,31 @@ const PlayScreen = ({ imageUrls = [], onGameReady }) => {
           placedStickers.push({ x, y, scale });
         });
 
+      console.log('🔗 URLs generadas y stickers procesados:', imageUrls.length);
       setStickerImages(imageUrls);
       
-      // 5. Seleccionar sticker objetivo aleatorio
+      // 8. Seleccionar sticker objetivo aleatorio
+      console.log('🎯 Seleccionando sticker objetivo aleatorio...');
       const target = await getRandomTargetSticker();
       setTargetSticker(target);
+      console.log('🎯 Sticker objetivo seleccionado:', target?.namesticker);
+      
+      // 9. Crear registro del juego en la DB
+      console.log('🎮 Creando registro del juego en la DB...');
+      const game = await createGame(userData.id);
+      setCurrentGame(game);
+      console.log('🎮 Juego creado con ID:', game?.id);
       
       setError(null);
       console.log('✅ Juego inicializado correctamente');
       
       // Notificar al wrapper que el juego está listo
+      console.log('📢 Notificando que el juego está listo...');
       if (onGameReady) {
         onGameReady();
+        console.log('📢 Callback onGameReady ejecutado');
+      } else {
+        console.warn('⚠️ No hay callback onGameReady disponible');
       }
       
     } catch (err) {
@@ -201,9 +243,30 @@ const PlayScreen = ({ imageUrls = [], onGameReady }) => {
   // Función cuando se acaba el tiempo
   const handleTimeUp = useCallback(async () => {
     console.log('⏰ Tiempo agotado');
+    
+    if (currentGame && gameStartTime) {
+      const endTime = new Date();
+      const timePlayed = Math.floor((endTime - gameStartTime) / 1000); // en segundos
+      const timeFormatted = `00:${Math.floor(timePlayed / 60).toString().padStart(2, '0')}:${(timePlayed % 60).toString().padStart(2, '0')}`;
+      
+      try {
+        await finishGame(
+          currentGame.id,
+          timeFormatted,
+          foundStickers,
+          foundStickers.length * 100 // 100 puntos por sticker encontrado
+        );
+        
+        console.log('✅ Juego finalizado y guardado');
+        // Aquí podrías navegar a una pantalla de resultados
+        
+      } catch (error) {
+        console.error('❌ Error guardando resultado del juego:', error);
+      }
+    }
+    
     setGameStarted(false);
-    // Solo mostrar mensaje sin guardar en DB
-  }, []);
+  }, [currentGame, gameStartTime, foundStickers]);
 
   // Memoizar las imágenes renderizadas
   const renderedStickers = useMemo(() => {

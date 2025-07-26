@@ -1,0 +1,184 @@
+.play-screen {
+  width: 104%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Fredericka the Great', cursive;
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.stickers-canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* Optimización para rendering */
+  contain: layout style paint;
+}
+
+.random-sticker {
+  position: absolute;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  /* Tamaños adaptativos usando viewport width - aumentados para desktop */
+  max-width: 12vw; /* Aumentado de 8vw a 12vw */
+  max-height: 12vh; /* Aumentado de 8vh a 12vh */
+  min-width: 4vw; /* Aumentado de 2vw a 4vw */
+  min-height: 4vh; /* Aumentado de 2vh a 4vh */
+  object-fit: contain;
+  z-index: 1;
+  
+  /* Sin borde para mejor rendimiento */
+  padding: 0.2vw;
+  border-radius: 0.5vw;
+}
+
+.random-sticker:hover {
+  transform: rotate(var(--rotation)) scale(calc(var(--scale) * 1.2)) !important;
+  z-index: 100;
+  filter: brightness(1.1);
+}
+
+/* Loading States */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: white;
+  text-align: center;
+}
+
+.loading-container h2,
+.error-container h2 {
+  margin-bottom: 20px;
+  font-size: 2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-top: 5px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container p {
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  color: #ffcccb;
+}
+
+.retry-button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'Fredericka the Great', cursive;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.retry-button:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive Design con viewport units */
+@media (max-width: 768px) {
+  .random-sticker {
+    /* En tablets, ajustamos ligeramente los tamaños */
+    max-width: 10vw; /* Ligeramente más grande en tablets */
+    max-height: 8vh;
+    min-width: 3vw;
+    min-height: 3vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .random-sticker {
+    /* En móviles, usamos tamaños más grandes para mejor visibilidad */
+    max-width: 12vw; /* Más grande en móviles para tocar fácilmente */
+    max-height: 10vh;
+    min-width: 4vw;
+    min-height: 4vh;
+    padding: 0.3vw;
+    border-radius: 1vw;
+  }
+}
+
+/* Overlay de inicio de juego */
+.start-game-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(5px);
+}
+
+.start-game-container {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  color: #333;
+  font-family: 'Fredericka the Great', cursive;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  max-width: 400px;
+  width: 90%;
+}
+
+.start-game-container h2 {
+  font-size: 2.5rem;
+  margin: 0 0 20px 0;
+  color: #b8525e;
+}
+
+.start-game-container p {
+  font-size: 1.2rem;
+  margin: 0 0 30px 0;
+  opacity: 0.8;
+}
+
+.start-game-container img{
+    width: 50%;
+    height: auto;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.start-game-container img:hover {
+  transform: scale(1.05);
+}
+
+/* Para pantallas muy grandes */
+@media (min-width: 1920px) {
+  .random-sticker {
+    /* En pantallas 4K mantenemos un tamaño visible pero no gigante */
+    max-width: 8vw; /* Reducido ligeramente en pantallas muy grandes */
+    max-height: 8vh;
+    min-width: 3vw;
+    min-height: 3vh;
+  }
+}
