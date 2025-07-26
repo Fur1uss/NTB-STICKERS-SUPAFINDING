@@ -8,6 +8,7 @@ import { createClient } from '@supabase/supabase-js';
 // Importar rutas del juego
 import gameRoutes from './routes/gameRoutes.js';
 import scoreboardRoutes from './routes/scoreboardRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,6 +44,10 @@ app.use('/api/game', gameRoutes);
 // RUTAS DEL SCOREBOARD  
 console.log('🏆 Configurando rutas del scoreboard...');
 app.use('/api/scoreboard', scoreboardRoutes);
+
+// RUTAS DE UPLOAD
+console.log('📤 Configurando rutas de upload...');
+app.use('/api/upload', uploadRoutes);
 
 // Endpoint de salud
 app.get('/health', (req, res) => {
