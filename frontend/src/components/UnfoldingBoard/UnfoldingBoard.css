@@ -8,9 +8,7 @@
   overflow: hidden;
   background: url('/loadingScreen.webp') center/cover no-repeat;
   z-index: 1000;
-  transition: transform 0.8s cubic-bezier(.68,-0.55,.27,1.55);
   opacity: 0;
-  animation: unfoldingBoardEnter 0.8s cubic-bezier(.68,-0.55,.27,1.55) forwards;
 
   display: flex;
   align-items: center;
@@ -18,8 +16,11 @@
 }
 
 .unfolding-board.open {
-  transform: translateX(-64.6%) translateY(0) scale(1);
-  opacity: 1;
+  animation: unfoldingBoardEnter 0.8s cubic-bezier(.68,-0.55,.27,1.55) forwards;
+}
+
+.unfolding-board.closing {
+  animation: unfoldingBoardExit 0.8s cubic-bezier(.68,-0.55,.27,1.55) forwards;
 }
 
 /* Animación de entrada */
@@ -52,10 +53,6 @@
   }
 }
 
-.unfolding-board:not(.open) {
-  animation: unfoldingBoardExit 0.8s cubic-bezier(.68,-0.55,.27,1.55) forwards;
-}
-
 .unfolding-board-content {
   padding: 0;
   opacity: 0;
@@ -71,6 +68,12 @@
 .unfolding-board.open .unfolding-board-content {
   opacity: 1;
   transform: scale(1);
+}
+
+.unfolding-board.closing .unfolding-board-content {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 } 
 
 .unfolding-board-close{

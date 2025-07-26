@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import GameAPIService from '../../services/gameService';
-import UploadSticker from '../UploadSticker/UploadSticker';
+import UploadStickerSimple from '../UploadSticker/UploadStickerSimple';
+import UnfoldingBoard from '../UnfoldingBoard/UnfoldingBoard';
 import "./scoreboardScreen.css";
 
 const ScoreboardScreen = () => {
@@ -14,7 +15,7 @@ const ScoreboardScreen = () => {
   const [error, setError] = useState(null);
   const [globalRanking, setGlobalRanking] = useState([]);
   const [userPosition, setUserPosition] = useState(null);
-  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showUnfolding, setShowUnfolding] = useState(false);
 
   // Obtener gameId de la URL o localStorage
   const gameId = searchParams.get('gameId') || 
@@ -110,15 +111,22 @@ const ScoreboardScreen = () => {
   /**
    * Navegar a nueva partida
    */
-  const handlePlayAgain = () => {
-    navigate('/play');
+  const handleHomeMenuu = () => {
+    navigate('/');
   };
 
   /**
-   * Navegar al home
+   * Manejar click en botón de upload
    */
-  const handleGoHome = () => {
-    navigate('/');
+  const handleUploadClick = () => {
+    setShowUnfolding(true);
+  };
+
+  /**
+   * Manejar cierre del UnfoldingBoard
+   */
+  const handleUnfoldingClose = () => {
+    setShowUnfolding(false);
   };
 
   /**
@@ -126,7 +134,7 @@ const ScoreboardScreen = () => {
    */
   const handleUploadSuccess = (result) => {
     console.log('✅ Sticker subido exitosamente:', result);
-    setShowUploadModal(false);
+    setShowUnfolding(false); // Cerrar el UnfoldingBoard
     // Aquí podrías mostrar una notificación de éxito
     alert('¡Sticker subido exitosamente!');
   };
@@ -199,27 +207,6 @@ const ScoreboardScreen = () => {
 
       {/* Información del Usuario */}
       <div className="informationContainer">
-        {/* Stickers Encontrados */}
-        <div className="stickersContainer">
-          <h3 className="stickers-title">Stickers Encontrados</h3>
-          <div className="found-stickers-grid">
-            {gameData?.statistics?.stickersDetails?.slice(0, 6).map((stickerData, index) => (
-              <div key={stickerData.id} className="found-sticker-item">
-                <img 
-                  src={stickerData.sticker.url} 
-                  alt={stickerData.sticker.name}
-                  className="found-sticker-image"
-                />
-              </div>
-            ))}
-            {gameData?.statistics?.stickersFound > 6 && (
-              <div className="more-stickers">
-                +{gameData.statistics.stickersFound - 6} más
-              </div>
-            )}
-          </div>
-        </div>
-
         {/* Información del Juego */}
         <div className="infoUserGameContainer">
           <div className="game-stats">
@@ -247,33 +234,29 @@ const ScoreboardScreen = () => {
 
         {/* Botones de Acción */}
         <div className="buttonsContainer">
-          <button onClick={handlePlayAgain} className="action-button play-again">
+          <button onClick={handleHomeMenuu} className="action-button play-again">
             <img src="/tryAgainButton.webp" alt="Jugar de Nuevo" />
-            <span>Jugar de Nuevo</span>
           </button>
-          
-          <button 
-            onClick={() => setShowUploadModal(true)} 
-            className="action-button upload-sticker"
-          >
+            
+          <button onClick={handleUploadClick} className="action-button go-home">
             <img src="/uploadButton.webp" alt="Subir Sticker" />
-            <span>Subir Sticker</span>
-          </button>
-          
-          <button onClick={handleGoHome} className="action-button go-home">
-            <img src="/tryAgainButton.webp" alt="Ir al Inicio" />
-            <span>Ir al Inicio</span>
           </button>
         </div>
       </div>
 
-      {/* Modal de Upload de Sticker */}
-      {showUploadModal && (
-        <UploadSticker
-          userId={JSON.parse(localStorage.getItem('backendUser') || '{}').id}
-          onUploadSuccess={handleUploadSuccess}
-          onClose={() => setShowUploadModal(false)}
-        />
+      {/* Animación de despliegue para upload */}
+      {showUnfolding && (
+        <UnfoldingBoard 
+          open={showUnfolding}
+          onClose={handleUnfoldingClose}
+          showCloseButton={false}
+        >
+          <UploadStickerSimple
+            userId={JSON.parse(localStorage.getItem('backendUser') || '{}').id}
+            onUploadSuccess={handleUploadSuccess}
+            onClose={handleUnfoldingClose}
+          />
+        </UnfoldingBoard>
       )}
     </div>
   );

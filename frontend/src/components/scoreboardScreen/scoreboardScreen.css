@@ -22,6 +22,7 @@
     justify-content: center;
     width: 50%;
     height: 100%;
+
 }
 
 .infoUserGameContainer{
@@ -32,7 +33,6 @@
     width: 100%;
     height: 50%;
 
-    margin-left: 60px;
 }
 
 .infoUserGameContainer p{
@@ -82,7 +82,7 @@
     width: 100%;
     height: 50%;
     gap: 25px;
-    margin-left: 60px;
+
 }
 
 .titleContainer{
@@ -261,7 +261,37 @@
     width: 100%;
     max-height: 400px;
     overflow-y: auto;
+    padding-right: 8px;
 }
+
+/* Estilos personalizados para la barra de scroll del ranking */
+.ranking-list::-webkit-scrollbar {
+    width: 12px;
+}
+
+.ranking-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+.ranking-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #CACF3E, #b8bd35);
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.ranking-list::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #d4d943, #CACF3E);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.ranking-list::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, #b8bd35, #a6ab30);
+}
+
+
 
 .ranking-item {
     display: flex;
@@ -388,6 +418,7 @@
     flex-direction: column;
     gap: 15px;
     width: 100%;
+    height: auto;
     max-width: 300px;
 }
 
@@ -395,10 +426,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 15px;
+    padding: 5px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     transition: all 0.3s ease;
+
+    width: 90%;
+    height: auto;
 }
 
 .stat-item:hover {
@@ -412,13 +446,13 @@
 
 .stat-label {
     font-family: 'Fredericka the Great', cursive;
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 2vw, 1.1rem);
     color: white;
 }
 
 .stat-value {
     font-family: 'Fredericka the Great', cursive;
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 2vw, 1rem);
     color: #CACF3E;
     font-weight: bold;
 }
@@ -434,6 +468,8 @@
     cursor: pointer;
     transition: all 0.3s ease;
     padding: 10px;
+    width: 60%;
+    height: 50%;
 }
 
 .action-button:hover {
@@ -443,7 +479,6 @@
 .action-button img {
     width: 100%;
     height: auto;
-    max-width: 200px;
 }
 
 .action-button span {
@@ -479,40 +514,4 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .scoreboard-screen {
-        flex-direction: column;
-    }
-    
-    .scoreboardContainer,
-    .informationContainer {
-        width: 100%;
-        height: 50%;
-    }
-    
-    .found-stickers-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .action-button.upload-sticker {
-        min-width: 180px;
-        padding: 10px 20px;
-    }
-    
-    .action-button.upload-sticker span {
-        font-size: 1rem;
-    }
-    
-    .ranking-item {
-        padding: 8px 12px;
-    }
-    
-    .position,
-    .username,
-    .score {
-        font-size: 1rem;
-    }
 }

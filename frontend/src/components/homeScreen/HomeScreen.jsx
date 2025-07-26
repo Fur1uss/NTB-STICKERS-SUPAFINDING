@@ -169,9 +169,9 @@ function HomeScreen() {
                 </div>
 
                 <div className="stickersContainer">
-                    <img src="/sticker01.webp" alt="" className="sticker sticker01" />
-                    <img src="/sticker02.webp" alt="" className="sticker sticker02" />
-                    <img src="/sticker03.webp" alt="" className="sticker sticker03" />
+                    <img src="/sticker01.webp" alt="" className="stickerObjectHome sticker01" />
+                    <img src="/sticker02.webp" alt="" className="stickerObjectHome sticker02" />
+                    <img src="/sticker03.webp" alt="" className="stickerObjectHome sticker03" />
                 </div>
 
                 <div className="mainScreenButtonsContainer">

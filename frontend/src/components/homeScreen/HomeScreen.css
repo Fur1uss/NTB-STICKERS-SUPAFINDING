@@ -34,11 +34,11 @@
     position: absolute;
 }
 
-.sticker{
-    width: 70%;
-    height: auto;
+.stickerObjectHome{
+    width: 20%!important;
+    height: auto!important;
 
-    object-fit: contain;
+    object-fit: contain!important;
 
     display: flex;
     align-items: center;
@@ -52,17 +52,17 @@
 }
 
 .sticker01{
-    top: -15%;
-    left: -15%;
+    top: -5%;
+    left: -5%;
 }
 .sticker02{
     top: 10%;
-    left: 35%;
+    left: 10%;
 }
 .sticker03{
     width: 90%;
-    top: 30%;
-    left: -20%;
+    top: 40%;
+    left: -5%;
 }
 
 
