@@ -7,9 +7,9 @@ import './index.css'
 import BackgroundComponent from './components/backgroundComponent/BackgroundComponent.jsx'
 import BoardComponent from './components/BoardComponent/BoardComponent.jsx';
 import JustAPlantComponent from './justAPlantComponent/JustAPlantComponent.jsx'
+import HomeScreen from './components/homeScreen/HomeScreen.jsx';
 
 //Screens
-import MainScreen from './components/mainScreen/MainScreen.jsx';
 import PlayWrapper from "./components/PlayWrapper/PlayWrapper.jsx";
 import ScoreboardScreen from "./components/scoreboardScreen/ScoreboardScreen.jsx";
 
@@ -23,7 +23,7 @@ createRoot(document.getElementById('root')).render(
           <>
             <JustAPlantComponent />
             <BoardComponent>
-              <MainScreen />
+              <HomeScreen />
             </BoardComponent>
           </>
         } />
