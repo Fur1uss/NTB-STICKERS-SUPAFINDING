@@ -3,9 +3,6 @@ import { useGameLogic } from "../../hooks/useGameLogic";
 import GameTimer from "../GameTimer/GameTimer";
 import TargetDisplay from "../TargetDisplay/TargetDisplay";
 import SuccessFeedback from "../SuccessFeedback/SuccessFeedback";
-import UnfoldingBoard from "../UnfoldingBoard/UnfoldingBoard";
-import LoadingAnimation from "../LoadingAnimation/LoadingAnimation";
-import ShuffleButton from "../ShuffleButton/ShuffleButton";
 import "./playScreen.css";
 
 const PlayScreen = ({ onGameReady }) => {
@@ -28,15 +25,8 @@ const PlayScreen = ({ onGameReady }) => {
     foundStickerName,
     startGame,
     handleStickerClick,
-    resetGame,
-    shuffleStickers
+    resetGame
   } = useGameLogic(userId);
-
-  // Debug: Log de cambios de estado del juego
-  React.useEffect(() => {
-    console.log('🎮 PlayScreen - Estado del juego cambió:', gameState);
-    console.log('⏰ Tiempo restante:', timeRemaining);
-  }, [gameState, timeRemaining]);
 
   // Notificar cuando el juego esté listo
   React.useEffect(() => {
@@ -133,11 +123,22 @@ const PlayScreen = ({ onGameReady }) => {
   if (gameState === 'finished') {
     return (
       <div className="play-screen">
-        <div className="game-finishing-overlay">
-          <div className="finishing-message">
+        <div className="game-finished-overlay">
+          <div className="game-finished-container">
             <div className="finished-icon">🏁</div>
             <h2>¡Juego Terminado!</h2>
-            <p>Cargando resultados...</p>
+            <p>Calculando puntuación...</p>
+            <div className="final-stats">
+              <div className="stat">
+                <span className="stat-label">Stickers encontrados:</span>
+                <span className="stat-value">{foundStickers.length}</span>
+              </div>
+              <div className="stat">
+                <span className="stat-label">Tiempo bonus ganado:</span>
+                <span className="stat-value">{timeBonus}s</span>
+              </div>
+            </div>
+            <p className="redirecting-text">Redirigiendo al scoreboard...</p>
           </div>
         </div>
       </div>
@@ -164,14 +165,6 @@ const PlayScreen = ({ onGameReady }) => {
         show={showSuccess}
         stickerName={foundStickerName}
       />
-      
-      {/* Botón de mezclar */}
-      {gameState === 'playing' && (
-        <ShuffleButton 
-          onClick={shuffleStickers}
-          className="game-shuffle-button"
-        />
-      )}
       
       {/* Canvas principal con stickers */}
       <div className="stickers-canvas">

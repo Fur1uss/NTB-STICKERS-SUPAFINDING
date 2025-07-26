@@ -1,0 +1,184 @@
+.game-timer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  z-index: 1000;
+  min-width: 140px;
+  transition: all 0.3s ease;
+}
+
+.timer-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timer-icon {
+  font-size: 24px;
+  animation: pulse 2s infinite;
+}
+
+.timer-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.timer-time {
+  font-size: 24px;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  color: #333;
+  line-height: 1;
+}
+
+.timer-bonus {
+  font-size: 12px;
+  color: #4CAF50;
+  font-weight: bold;
+  animation: bonusFlash 0.5s ease-out;
+}
+
+.timer-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.timer-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  animation: progressShine 2s infinite;
+}
+
+/* Estados del timer */
+.timer-normal {
+  border-color: #4CAF50;
+}
+
+.timer-normal .timer-time {
+  color: #2E7D32;
+}
+
+.timer-normal .timer-progress-fill {
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+}
+
+.timer-warning {
+  border-color: #FF9800;
+  animation: warningPulse 1s infinite;
+}
+
+.timer-warning .timer-time {
+  color: #F57C00;
+}
+
+.timer-warning .timer-progress-fill {
+  background: linear-gradient(90deg, #FF9800, #FFC107);
+}
+
+.timer-critical {
+  border-color: #F44336;
+  animation: criticalPulse 0.5s infinite;
+  background: rgba(255, 235, 235, 0.95);
+}
+
+.timer-critical .timer-time {
+  color: #D32F2F;
+  animation: criticalFlash 0.5s infinite;
+}
+
+.timer-critical .timer-progress-fill {
+  background: linear-gradient(90deg, #F44336, #FF5722);
+  animation: criticalProgressFlash 0.5s infinite;
+}
+
+/* Animaciones */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes bonusFlash {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes progressShine {
+  0% { box-shadow: inset 0 0 0 rgba(255, 255, 255, 0); }
+  50% { box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.3); }
+  100% { box-shadow: inset 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+@keyframes warningPulse {
+  0%, 100% { 
+    box-shadow: 0 4px 20px rgba(255, 152, 0, 0.1);
+  }
+  50% { 
+    box-shadow: 0 4px 20px rgba(255, 152, 0, 0.3);
+  }
+}
+
+@keyframes criticalPulse {
+  0%, 100% { 
+    box-shadow: 0 4px 20px rgba(244, 67, 54, 0.2);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 4px 20px rgba(244, 67, 54, 0.5);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes criticalFlash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes criticalProgressFlash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .game-timer {
+    top: 10px;
+    right: 10px;
+    padding: 10px 15px;
+    min-width: 120px;
+  }
+  
+  .timer-time {
+    font-size: 20px;
+  }
+  
+  .timer-icon {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-timer {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    min-width: auto;
+  }
+  
+  .timer-display {
+    justify-content: center;
+  }
+}

@@ -5,6 +5,10 @@ import express from 'express';
 import cors from 'cors';
 import { createClient } from '@supabase/supabase-js';
 
+// Importar rutas del juego
+import gameRoutes from './routes/gameRoutes.js';
+import scoreboardRoutes from './routes/scoreboardRoutes.js';
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -31,6 +35,14 @@ app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
 });
+
+// RUTAS DEL JUEGO
+console.log('🎮 Configurando rutas del juego...');
+app.use('/api/game', gameRoutes);
+
+// RUTAS DEL SCOREBOARD  
+console.log('🏆 Configurando rutas del scoreboard...');
+app.use('/api/scoreboard', scoreboardRoutes);
 
 // Endpoint de salud
 app.get('/health', (req, res) => {
@@ -323,6 +335,8 @@ app.listen(PORT, () => {
   console.log('🔗 Health Check:', `http://localhost:${PORT}/health`);
   console.log('🔐 Auth Endpoint:', `http://localhost:${PORT}/api/auth/create-or-get-user`);
   console.log('👤 User Endpoint:', `http://localhost:${PORT}/api/auth/user`);
+  console.log('🎮 Game Endpoints:', `http://localhost:${PORT}/api/game/*`);
+  console.log('🏆 Scoreboard Endpoints:', `http://localhost:${PORT}/api/scoreboard/*`);
   console.log('='.repeat(50));
   console.log('✅ Servidor listo para recibir peticiones');
   console.log();

@@ -54,39 +54,6 @@ const ScoreboardScreen = () => {
 
     } catch (error) {
       console.error('❌ Error cargando scoreboard:', error);
-      
-      // Si la partida no se encuentra, usar datos de localStorage como fallback
-      if (error.message.includes('Partida no encontrada')) {
-        console.log('🔄 Partida no encontrada, usando datos de localStorage...');
-        const lastGameData = localStorage.getItem('lastGameResult');
-        
-        if (lastGameData) {
-          try {
-            const gameData = JSON.parse(lastGameData);
-            setGameData({
-              game: {
-                id: gameData.gameId,
-                score: gameData.finalScore || 0,
-                timePlayed: '00:01:30', // Tiempo por defecto
-                user: {
-                  username: 'Jugador',
-                  id: 1
-                }
-              },
-              statistics: {
-                stickersFound: gameData.stickersFound || 0,
-                stickersDetails: []
-              }
-            });
-            
-            console.log('✅ Datos cargados desde localStorage');
-            return;
-          } catch (parseError) {
-            console.error('❌ Error parseando datos de localStorage:', parseError);
-          }
-        }
-      }
-      
       setError(`Error cargando datos: ${error.message}`);
     } finally {
       setLoading(false);

@@ -3,7 +3,6 @@ import UnfoldingBoard from '../UnfoldingBoard/UnfoldingBoard';
 import BoardComponent from '../BoardComponent/BoardComponent';
 import PlayScreen from '../PlayScreen/PlayScreen';
 import LoadingAnimation from '../LoadingAnimation/LoadingAnimation';
-import ShuffleButton from '../ShuffleButton/ShuffleButton';
 const PlayWrapper = () => {
   const [showBoard, setShowBoard] = useState(false);
 
@@ -29,7 +28,6 @@ const PlayWrapper = () => {
       <UnfoldingBoard open={showBoard}>
         <LoadingAnimation />
       </UnfoldingBoard>
-        <ShuffleButton />
       <BoardComponent>
         <PlayScreen onGameReady={handleGameReady} />
       </BoardComponent>

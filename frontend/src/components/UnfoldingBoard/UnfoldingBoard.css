@@ -2,13 +2,15 @@
   position: fixed;
   top: 0%;
   left: 50%;
-  transform: translateX(-64.6%);
+  transform: translateX(-64.6%) translateY(-100%) scale(0.9);
   width: 70vw;
-  height: 0;
+  height: 90vh;
   overflow: hidden;
   background: url('/loadingScreen.webp') center/cover no-repeat;
   z-index: 1000;
-  transition: height 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+  transition: transform 0.8s cubic-bezier(.68,-0.55,.27,1.55);
+  opacity: 0;
+  animation: unfoldingBoardEnter 0.8s cubic-bezier(.68,-0.55,.27,1.55) forwards;
 
   display: flex;
   align-items: center;
@@ -16,13 +18,49 @@
 }
 
 .unfolding-board.open {
-  height: 90vh;
+  transform: translateX(-64.6%) translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* Animación de entrada */
+@keyframes unfoldingBoardEnter {
+  0% {
+    transform: translateX(-64.6%) translateY(-100%) scale(0.9);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(-64.6%) translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Animación de salida */
+@keyframes unfoldingBoardExit {
+  0% {
+    transform: translateX(-64.6%) translateY(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(-64.6%) translateY(-100%) scale(0.9);
+    opacity: 0;
+  }
+}
+
+.unfolding-board:not(.open) {
+  animation: unfoldingBoardExit 0.8s cubic-bezier(.68,-0.55,.27,1.55) forwards;
 }
 
 .unfolding-board-content {
   padding: 0;
   opacity: 0;
-  transition: opacity 0.3s 0.3s;
+  transform: scale(0.8);
+  transition: opacity 0.4s 0.4s ease-out, transform 0.4s 0.4s ease-out;
   width: 87%;
   height: 80%;
   display: flex;
@@ -32,6 +70,7 @@
 
 .unfolding-board.open .unfolding-board-content {
   opacity: 1;
+  transform: scale(1);
 } 
 
 .unfolding-board-close{
