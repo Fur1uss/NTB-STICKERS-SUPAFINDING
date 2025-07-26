@@ -11,7 +11,7 @@ import HomeScreen from './components/homeScreen/HomeScreen.jsx';
 
 //Screens
 import PlayWrapper from "./components/PlayWrapper/PlayWrapper.jsx";
-import ScoreboardScreen from "./components/scoreboardScreen/ScoreboardScreen_OLD.jsx";
+import ScoreboardScreen from "./components/scoreboardScreen/ScoreboardScreen.jsx";
 
 createRoot(document.getElementById('root')).render(
   

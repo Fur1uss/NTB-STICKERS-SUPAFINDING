@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import GameAPIService from '../../services/gameService';
+import UploadSticker from '../UploadSticker/UploadSticker';
 import "./scoreboardScreen.css";
 
 const ScoreboardScreen = () => {
@@ -13,6 +14,7 @@ const ScoreboardScreen = () => {
   const [error, setError] = useState(null);
   const [globalRanking, setGlobalRanking] = useState([]);
   const [userPosition, setUserPosition] = useState(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   // Obtener gameId de la URL o localStorage
   const gameId = searchParams.get('gameId') || 
@@ -117,6 +119,16 @@ const ScoreboardScreen = () => {
    */
   const handleGoHome = () => {
     navigate('/');
+  };
+
+  /**
+   * Manejar subida exitosa de sticker
+   */
+  const handleUploadSuccess = (result) => {
+    console.log('✅ Sticker subido exitosamente:', result);
+    setShowUploadModal(false);
+    // Aquí podrías mostrar una notificación de éxito
+    alert('¡Sticker subido exitosamente!');
   };
 
   // Estados de carga
@@ -240,12 +252,29 @@ const ScoreboardScreen = () => {
             <span>Jugar de Nuevo</span>
           </button>
           
+          <button 
+            onClick={() => setShowUploadModal(true)} 
+            className="action-button upload-sticker"
+          >
+            <img src="/uploadButton.webp" alt="Subir Sticker" />
+            <span>Subir Sticker</span>
+          </button>
+          
           <button onClick={handleGoHome} className="action-button go-home">
-            <img src="/uploadButton.webp" alt="Ir al Inicio" />
+            <img src="/tryAgainButton.webp" alt="Ir al Inicio" />
             <span>Ir al Inicio</span>
           </button>
         </div>
       </div>
+
+      {/* Modal de Upload de Sticker */}
+      {showUploadModal && (
+        <UploadSticker
+          userId={JSON.parse(localStorage.getItem('backendUser') || '{}').id}
+          onUploadSuccess={handleUploadSuccess}
+          onClose={() => setShowUploadModal(false)}
+        />
+      )}
     </div>
   );
 };
