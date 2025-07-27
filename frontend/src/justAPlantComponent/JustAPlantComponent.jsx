@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './justAPlantComponent.css';
+import './JustAPlantComponent.css';
 
 const JustAPlantComponent = () => {
     const [show, setShow] = useState(false);

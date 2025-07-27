@@ -1,5 +1,5 @@
 import React from 'react';
-import './gameTimer.css';
+import './GameTimer.css';
 
 const GameTimer = ({ timeRemaining, timeBonus, showTimer = true }) => {
   

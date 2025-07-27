@@ -1,5 +1,5 @@
 import React from "react";
-import "./shuffleButton.css";
+import "./ShuffleButton.css";
 
 const ShuffleButton = ({ onClick, className = "" }) => {
   return (

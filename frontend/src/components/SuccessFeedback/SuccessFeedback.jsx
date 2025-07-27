@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import './successFeedback.css';
+import './SuccessFeedback.css';
 
 const SuccessFeedback = ({ show, stickerName, onHide }) => {
   

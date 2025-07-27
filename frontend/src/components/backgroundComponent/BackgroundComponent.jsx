@@ -1,5 +1,5 @@
 import React from 'react';
-import './backgroundComponent.css'; // Archivo CSS con nombre correcto
+import './BackgroundComponent.css'; // Archivo CSS con nombre correcto
 
 const BackgroundComponent = () => {
   return (

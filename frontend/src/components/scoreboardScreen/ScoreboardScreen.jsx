@@ -6,7 +6,7 @@ import uploadService from '../../services/uploadService';
 import UploadStickerSimple from '../UploadSticker/UploadStickerSimple';
 import ModerationCheck from '../ModerationCheck/ModerationCheck';
 import UnfoldingBoard from '../UnfoldingBoard/UnfoldingBoard';
-import "./scoreboardScreen.css";
+import "./ScoreboardScreen.css";
 
 const ScoreboardScreen = () => {
   const [searchParams] = useSearchParams();

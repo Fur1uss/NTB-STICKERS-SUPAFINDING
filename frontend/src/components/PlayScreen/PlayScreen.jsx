@@ -6,7 +6,7 @@ import SuccessFeedback from "../SuccessFeedback/SuccessFeedback";
 import UnfoldingBoard from "../UnfoldingBoard/UnfoldingBoard";
 import LoadingAnimation from "../LoadingAnimation/LoadingAnimation";
 import ShuffleButton from "../ShuffleButton/ShuffleButton";
-import "./playScreen.css";
+import "./PlayScreen.css";
 
 const PlayScreen = ({ onGameReady }) => {
   // Obtener userId desde localStorage (establecido en HomeScreen)

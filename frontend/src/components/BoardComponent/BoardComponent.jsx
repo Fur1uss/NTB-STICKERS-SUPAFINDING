@@ -1,5 +1,5 @@
 import React from 'react';
-import './boardComponent.css';
+import './BoardComponent.css';
 
 const BoardComponent = ({children}) => {
   return (
