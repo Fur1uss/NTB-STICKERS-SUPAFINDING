@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import GameAPIService from '../../services/gameService';
 import soundService from '../../services/soundService';
+import uploadService from '../../services/uploadService';
 import UploadStickerSimple from '../UploadSticker/UploadStickerSimple';
+import ModerationCheck from '../ModerationCheck/ModerationCheck';
 import UnfoldingBoard from '../UnfoldingBoard/UnfoldingBoard';
 import "./scoreboardScreen.css";
 
@@ -18,6 +20,9 @@ const ScoreboardScreen = () => {
   const [userPosition, setUserPosition] = useState(null);
   const [showUnfolding, setShowUnfolding] = useState(false);
   const [unfoldingOpen, setUnfoldingOpen] = useState(false);
+  const [showModeration, setShowModeration] = useState(false);
+  const [uploadData, setUploadData] = useState(null);
+  const [showInappropriateMessage, setShowInappropriateMessage] = useState(false);
 
   // Obtener gameId de la URL o localStorage
   const gameId = searchParams.get('gameId') || 
@@ -153,6 +158,11 @@ const ScoreboardScreen = () => {
     // Cerrar la animación pero mantener el componente montado temporalmente
     setUnfoldingOpen(false);
     
+    // Resetear estados de moderación
+    setShowModeration(false);
+    setUploadData(null);
+    setShowInappropriateMessage(false);
+    
     // Esperar a que termine la animación antes de desmontar completamente
     setTimeout(() => {
       setShowUnfolding(false);
@@ -160,20 +170,84 @@ const ScoreboardScreen = () => {
   };
 
   /**
-   * Manejar subida exitosa de sticker
+   * Manejar inicio de upload con moderación
    */
-  const handleUploadSuccess = (result) => {
-    console.log('✅ Sticker subido exitosamente:', result);
-    
-    // Cerrar con animación
-    setUnfoldingOpen(false);
-    setTimeout(() => {
-      setShowUnfolding(false);
-    }, 800);
-    
-    // Aquí podrías mostrar una notificación de éxito
-    alert('¡Sticker subido exitosamente!');
+  const handleUploadStart = (uploadData) => {
+    console.log('🔄 Iniciando upload con moderación:', uploadData);
+    setUploadData(uploadData);
+    setShowModeration(true);
   };
+
+  /**
+   * Manejar resultado de moderación
+   */
+  const handleModerationComplete = async (result) => {
+    console.log('📞 Resultado de moderación:', result);
+    
+    if (result.error) {
+      // Error en moderación, continuar sin verificación
+      console.warn('⚠️ Error en moderación, continuando sin verificación:', result.error);
+      await proceedWithUpload();
+      return;
+    }
+
+    if (result.isAppropriate) {
+      // Imagen apropiada, proceder con el upload
+      console.log('✅ Imagen apropiada, procediendo con upload');
+      await proceedWithUpload();
+    } else {
+      // Imagen inapropiada, mostrar mensaje no invasivo
+      console.log('🚫 Imagen inapropiada detectada:', result.dominantCategory);
+      setShowInappropriateMessage(true);
+      setShowModeration(false);
+      
+      // Ocultar mensaje después de 5 segundos
+      setTimeout(() => {
+        setShowInappropriateMessage(false);
+      }, 5000);
+    }
+  };
+
+  /**
+   * Manejar éxito del upload
+   */
+  const handleUploadSuccess = () => {
+    console.log('✅ Upload exitoso, redirigiendo al home');
+    navigate('/');
+  };
+
+  /**
+   * Proceder con el upload después de moderación
+   */
+  const proceedWithUpload = async () => {
+    if (!uploadData) {
+      console.error('❌ No hay datos de upload disponibles');
+      return;
+    }
+
+    try {
+      const { file, name, description, userId } = uploadData;
+      const result = await uploadService.uploadSticker(file, name, description, userId);
+      console.log('✅ Upload exitoso:', result);
+      
+      // Cerrar moderación y mostrar éxito
+      setShowModeration(false);
+      setUploadData(null);
+      
+             // Cerrar con animación
+       setUnfoldingOpen(false);
+       setTimeout(() => {
+         setShowUnfolding(false);
+       }, 800);
+    } catch (error) {
+      console.error('❌ Error en upload:', error);
+      setShowModeration(false);
+      setUploadData(null);
+      alert('Error subiendo sticker: ' + error.message);
+    }
+  };
+
+
 
   // Estados de carga
   if (loading) {
@@ -287,15 +361,45 @@ const ScoreboardScreen = () => {
           onClose={handleUnfoldingClose}
           showCloseButton={false}
         >
-          <UploadStickerSimple
-            userId={JSON.parse(localStorage.getItem('backendUser') || '{}').id}
-            onUploadSuccess={handleUploadSuccess}
-            onClose={handleUnfoldingClose}
-          />
-        </UnfoldingBoard>
-      )}
-    </div>
-  );
-};
+                     {showModeration ? (
+             <ModerationCheck
+               file={uploadData?.file}
+               onModerationComplete={handleModerationComplete}
+               onUploadSuccess={handleUploadSuccess}
+               onClose={() => {
+                 setShowModeration(false);
+                 setUploadData(null);
+               }}
+             />
+           ) : (
+            <UploadStickerSimple
+              userId={JSON.parse(localStorage.getItem('backendUser') || '{}').id}
+              onUploadStart={handleUploadStart}
+              onClose={handleUnfoldingClose}
+            />
+          )}
+                 </UnfoldingBoard>
+       )}
+
+       {/* Mensaje no invasivo para contenido inapropiado */}
+       {showInappropriateMessage && (
+         <div className="inappropriate-message">
+           <div className="inappropriate-message-content">
+             <div className="inappropriate-icon">⚠️</div>
+             <h3>Inappropriate Content</h3>
+             <p>
+               Your image contains inappropriate content.
+             </p>
+             <p className="inappropriate-suggestion">
+               Please try with a different image.
+             </p>
+           </div>
+         </div>
+       )}
+
+
+     </div>
+   );
+ };
 
 export default ScoreboardScreen;

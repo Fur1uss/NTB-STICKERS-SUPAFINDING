@@ -12,13 +12,19 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.jsx';
 import AuthCheck from './components/AuthCheck/AuthCheck.jsx';
 import OrientationGuard from './components/OrientationGuard/OrientationGuard.jsx';
 
+// Hooks
+import { useModerationPreload } from './hooks/useModerationPreload.js';
+
 //Screens
 import PlayWrapper from "./components/PlayWrapper/PlayWrapper.jsx";
 import ScoreboardScreen from "./components/scoreboardScreen/ScoreboardScreen.jsx";
 
-createRoot(document.getElementById('root')).render(
-  
-  <StrictMode>
+// Componente principal que incluye la precarga de moderación
+const App = () => {
+  // Precargar el modelo de moderación en segundo plano
+  const { isPreloaded, isPreloading, error } = useModerationPreload();
+
+  return (
     <OrientationGuard>
       <BrowserRouter>
         <Routes>
@@ -57,5 +63,11 @@ createRoot(document.getElementById('root')).render(
         <BackgroundComponent />
       </BrowserRouter>
     </OrientationGuard>
+  );
+};
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
   </StrictMode>
 )
