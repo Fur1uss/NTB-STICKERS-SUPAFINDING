@@ -18,15 +18,15 @@
 
 
 .boardDyinamicContainer{
-    width: 91%;
-    height: 86%;
+    width: 94%;
+    height: 90%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
 
 
-    padding: 20px;
 
+    margin-bottom: 1vh;
     z-index: 2;
 }

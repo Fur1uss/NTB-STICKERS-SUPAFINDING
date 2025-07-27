@@ -249,7 +249,7 @@ const ScoreboardScreen = () => {
         {/* Botones de Acción */}
         <div className="buttonsContainer">
           <button onClick={handleHomeMenuu} className="action-button play-again">
-            <img src="/tryAgainButton.webp" alt="Jugar de Nuevo" />
+            <img src="/menuButton.webp" alt="Jugar de Nuevo" />
           </button>
             
           <button onClick={handleUploadClick} className="action-button go-home">

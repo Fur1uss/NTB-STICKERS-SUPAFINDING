@@ -23,7 +23,7 @@ const TargetDisplay = ({ targetSticker, foundStickers = [], showTarget = true })
     <div className="target-display">
       <div className="target-header">
         <div className="target-icon">🎯</div>
-        <h3 className="target-title">¡Encuentra este sticker!</h3>
+        <h3 className="target-title">Find this sticker!</h3>
       </div>
       
       <div className="target-content">
@@ -40,12 +40,6 @@ const TargetDisplay = ({ targetSticker, foundStickers = [], showTarget = true })
           <p className="target-description">
             {getDisplayName()}
           </p>
-          
-          <div className="target-stats">
-            <span className="found-count">
-              🎯 Encontrados: {foundStickers.length}
-            </span>
-          </div>
         </div>
       </div>
       
