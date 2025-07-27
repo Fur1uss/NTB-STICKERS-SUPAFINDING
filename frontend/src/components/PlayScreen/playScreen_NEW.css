@@ -178,11 +178,13 @@
   z-index: 100;
 }
 
+/* MODIFICADO: Los stickers encontrados ya no se deshabilitan visualmente
 .random-sticker.found-sticker {
   opacity: 0.5;
   filter: grayscale(80%) drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
   pointer-events: none;
 }
+*/
 
 /* Overlay de juego finalizado */
 .game-finished-overlay {

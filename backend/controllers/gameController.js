@@ -102,8 +102,9 @@ export class GameController {
         parseInt(stickerId)
       );
 
+      // MODIFICADO: Ya no bloqueamos stickers repetidos
       if (!result.success) {
-        console.log('⚠️  Sticker ya encontrado o error controlado');
+        console.log('⚠️  Error controlado en el sticker');
         return res.status(409).json({
           success: false,
           message: result.message,

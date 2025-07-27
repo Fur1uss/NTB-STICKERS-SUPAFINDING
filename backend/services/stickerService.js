@@ -188,6 +188,7 @@ export class StickerService {
 
   /**
    * Obtiene un sticker aleatorio para el juego
+   * MODIFICADO: Permite que los stickers se repitan como objetivos
    * @param {Array} availableStickers - Lista de stickers disponibles (opcional)
    * @returns {Object} Sticker objetivo
    */
@@ -202,23 +203,17 @@ export class StickerService {
         throw new Error('No hay stickers disponibles');
       }
 
-      // Crear mapa para evitar duplicados por nombre
-      const uniqueStickers = new Map();
-      stickers.forEach(sticker => {
-        if (!uniqueStickers.has(sticker.namesticker)) {
-          uniqueStickers.set(sticker.namesticker, sticker);
-        }
-      });
-
-      const uniqueStickerArray = Array.from(uniqueStickers.values());
-      const randomIndex = Math.floor(Math.random() * uniqueStickerArray.length);
-      const targetSticker = uniqueStickerArray[randomIndex];
+      // MODIFICACIÓN: Ya no filtramos por únicos, permitimos repetición
+      // Seleccionar directamente de todos los stickers disponibles
+      const randomIndex = Math.floor(Math.random() * stickers.length);
+      const targetSticker = stickers[randomIndex];
 
       console.log('🎲 Sticker seleccionado:');
       console.log('   🆔 ID:', targetSticker.id);
       console.log('   📛 Nombre:', targetSticker.namesticker);
       console.log('   📝 Descripción:', targetSticker.descriptionsticker);
-      console.log('   📊 Total únicos disponibles:', uniqueStickerArray.length);
+      console.log('   📊 Total stickers disponibles:', stickers.length);
+      console.log('   🔄 Permite repetición: SÍ');
 
       return targetSticker;
 
