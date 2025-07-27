@@ -1,5 +1,5 @@
 import React from 'react';
-import './targetDisplay.css';
+import './TargetDisplay.css';
 
 const TargetDisplay = ({ targetSticker, foundStickers = [], showTarget = true }) => {
   
