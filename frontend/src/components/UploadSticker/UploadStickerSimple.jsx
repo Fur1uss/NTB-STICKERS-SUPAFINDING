@@ -67,7 +67,7 @@ const UploadStickerSimple = ({ userId, onUploadSuccess, onClose }) => {
     setError('');
 
     try {
-      const result = await uploadService.uploadSticker(file, userId, name.trim(), description.trim());
+      const result = await uploadService.uploadSticker(file, name.trim(), description.trim(), userId);
       console.log('✅ Upload exitoso:', result);
       onUploadSuccess(result);
     } catch (error) {
@@ -85,20 +85,24 @@ const UploadStickerSimple = ({ userId, onUploadSuccess, onClose }) => {
         <form className="upload-form" onSubmit={handleSubmit}>
             <div className='name-description-container'>
                 <div className="form-group">
-                        <label htmlFor="name" className="form-label">Nombre del Sticker:</label>
-                        <input
-                        type="text"
-                        id="name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="form-input"
-                        disabled={loading}
-                        placeholder="Ingresa el nombre del sticker"
-                        />
+                  <label htmlFor="name" className="form-label">
+                    <img src="/nameTitle.webp" alt="" />
+                  </label>
+                    <input
+                    type="text"
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="form-input"
+                    disabled={loading}
+                    placeholder="Ingresa el nombre del sticker"
+                  />
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="description" className="form-label">Descripción:</label>
+                  <label htmlFor="description" className="form-label">
+                    <img src="/descriptionTitle.webp" alt="" />
+                  </label>
                     <textarea
                     id="description"
                     value={description}
@@ -106,33 +110,40 @@ const UploadStickerSimple = ({ userId, onUploadSuccess, onClose }) => {
                     className="form-textarea"
                     disabled={loading}
                     placeholder="Describe tu sticker"
-                    />
+                  />
                 </div>
             </div>
 
             <div className='file-upload-container'>
-                <div className="form-group">
-                    <label htmlFor="file" className="form-label">Archivo PNG:</label>
-                    <input
+              <div className='file-upload-title'>
+                <img src="/stickerTitle.webp" alt="" />
+              </div>
+                 <div className="form-group upload-group">
+                  {/* Input de archivo oculto */}
+                  <input
                     type="file"
                     id="file"
                     ref={fileInputRef}
                     onChange={handleFileChange}
                     accept=".png"
-                    className="file-input"
+                    className="file-input-hidden"
                     disabled={loading}
-                    />
-                </div>
-
-                {preview && (
-                    <div className="preview-container">
+                    style={{ display: 'none' }}
+                  />
+                  
+                  {/* Imagen clickeable que activa el selector de archivos */}
+                  <div 
+                    className={`file-upload-button ${loading ? 'disabled' : ''}`}
+                    onClick={() => !loading && fileInputRef.current?.click()}
+                  >
                     <img 
-                        src={preview} 
-                        alt="Preview" 
-                        className="preview-image"
+                      src={preview || "/emptySticker.webp"} 
+                      alt={file ? "Preview del sticker" : "Seleccionar archivo"} 
+                      className="upload-button-image"
                     />
-                    </div>
-                )}
+
+                  </div>
+                </div>
 
                 {error && (
                     <div className="error-message">
@@ -141,22 +152,15 @@ const UploadStickerSimple = ({ userId, onUploadSuccess, onClose }) => {
                 )}
 
                 <div className="button-group">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        disabled={loading}
-                        className="btn btn-cancel"
-                        >
-                        Cancelar
-                    </button>
+
+                    <img src="/cancelButton.webp" alt="Cancelar" onClick={onClose} className="cancel-button" />
                     
-                    <button
-                        type="submit"
-                        disabled={loading || !file || !name.trim() || !description.trim()}
-                        className="btn btn-submit"
-                        >
-                        {loading ? 'Subiendo...' : 'Subir Sticker'}
-                    </button>
+                    <img 
+                        src="/uploadSimpleButton.webp" 
+                        alt={loading ? 'Subiendo...' : 'Subir Sticker'}
+                        onClick={handleSubmit}
+                        className={`upload-button ${loading || !file || !name.trim() || !description.trim() ? 'disabled' : ''}`}
+                    />
                 </div>
           </div>
         </form>

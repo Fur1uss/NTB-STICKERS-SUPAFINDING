@@ -16,6 +16,7 @@ const ScoreboardScreen = () => {
   const [globalRanking, setGlobalRanking] = useState([]);
   const [userPosition, setUserPosition] = useState(null);
   const [showUnfolding, setShowUnfolding] = useState(false);
+  const [unfoldingOpen, setUnfoldingOpen] = useState(false);
 
   // Obtener gameId de la URL o localStorage
   const gameId = searchParams.get('gameId') || 
@@ -120,13 +121,20 @@ const ScoreboardScreen = () => {
    */
   const handleUploadClick = () => {
     setShowUnfolding(true);
+    setUnfoldingOpen(true);
   };
 
   /**
    * Manejar cierre del UnfoldingBoard
    */
   const handleUnfoldingClose = () => {
-    setShowUnfolding(false);
+    // Cerrar la animación pero mantener el componente montado temporalmente
+    setUnfoldingOpen(false);
+    
+    // Esperar a que termine la animación antes de desmontar completamente
+    setTimeout(() => {
+      setShowUnfolding(false);
+    }, 800); // Mismo tiempo que la animación del UnfoldingBoard
   };
 
   /**
@@ -134,7 +142,13 @@ const ScoreboardScreen = () => {
    */
   const handleUploadSuccess = (result) => {
     console.log('✅ Sticker subido exitosamente:', result);
-    setShowUnfolding(false); // Cerrar el UnfoldingBoard
+    
+    // Cerrar con animación
+    setUnfoldingOpen(false);
+    setTimeout(() => {
+      setShowUnfolding(false);
+    }, 800);
+    
     // Aquí podrías mostrar una notificación de éxito
     alert('¡Sticker subido exitosamente!');
   };
@@ -247,7 +261,7 @@ const ScoreboardScreen = () => {
       {/* Animación de despliegue para upload */}
       {showUnfolding && (
         <UnfoldingBoard 
-          open={showUnfolding}
+          open={unfoldingOpen}
           onClose={handleUnfoldingClose}
           showCloseButton={false}
         >
