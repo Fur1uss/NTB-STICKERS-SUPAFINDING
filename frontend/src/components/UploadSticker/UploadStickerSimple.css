@@ -326,6 +326,84 @@
   animation: fadeIn 0.3s ease-out;
 }
 
+/* Información del límite de uploads */
+.upload-limit-info {
+  margin: 15px 0;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.limit-loading {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.limit-status {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.limit-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.limit-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.limit-bar {
+  width: 100%;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.limit-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #FFC107, #F44336);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.limit-status.has-remaining .limit-progress {
+  background: #4CAF50;
+}
+
+.limit-status.at-limit .limit-progress {
+  background: #F44336;
+}
+
+.limit-message {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.limit-status.at-limit .limit-message {
+  color: #F44336;
+  font-weight: 600;
+}
+
+.limit-reset {
+  text-align: center;
+  font-size: 11px;
+  color: #999;
+  margin-top: 4px;
+  font-style: italic;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .upload-sticker-container {

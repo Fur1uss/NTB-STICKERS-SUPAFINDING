@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useUploadLimit } from '../../hooks/useUploadLimit';
 import './UploadStickerSimple.css';
 
 const UploadStickerSimple = ({ userId, onUploadStart, onClose }) => {
@@ -10,6 +11,9 @@ const UploadStickerSimple = ({ userId, onUploadStart, onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const fileInputRef = useRef(null);
+
+  // Hook para manejar límites de upload
+  const uploadLimit = useUploadLimit(userId);
 
   /**
    * Resetea todos los estados de control
@@ -73,12 +77,23 @@ const UploadStickerSimple = ({ userId, onUploadStart, onClose }) => {
     }
     
     if (!file || !name.trim() || !description.trim()) {
-      setError('Todos los campos son obligatorios');
+      setError('All fields are required');
+      return;
+    }
+
+    // Verificar límite de uploads antes de proceder
+    console.log('🔍 Verificando límite de uploads antes de proceder...');
+    const canProceed = await uploadLimit.canUpload();
+    
+    if (!canProceed) {
+      setError(`Upload limit reached! You can upload ${uploadLimit.limit} stickers every ${uploadLimit.timeWindowHours} hours. ${uploadLimit.statusMessage}`);
       return;
     }
 
     // Marcar como enviando para prevenir múltiples clicks
     setIsSubmitting(true);
+    
+    console.log('✅ Límite verificado, procediendo con upload...');
     
     // Iniciar proceso de moderación
     if (onUploadStart) {
@@ -86,7 +101,11 @@ const UploadStickerSimple = ({ userId, onUploadStart, onClose }) => {
         file,
         name: name.trim(),
         description: description.trim(),
-        userId
+        userId,
+        // Pasar función para actualizar límite después del upload exitoso
+        onUploadSuccess: () => {
+          uploadLimit.refreshAfterUpload();
+        }
       });
     }
     
@@ -169,18 +188,55 @@ const UploadStickerSimple = ({ userId, onUploadStart, onClose }) => {
                     </div>
                 )}
 
+                {/* Información del límite de uploads */}
+                <div className="upload-limit-info">
+                  {uploadLimit.loading ? (
+                    <div className="limit-loading">
+                      <span>Checking upload limits...</span>
+                    </div>
+                  ) : (
+                    <div className={`limit-status ${uploadLimit.isAtLimit ? 'at-limit' : 'has-remaining'}`}>
+                      <div className="limit-text">
+                        <span className="limit-count">{uploadLimit.limitText}</span>
+                      </div>
+                      <div className="limit-bar">
+                        <div 
+                          className="limit-progress" 
+                          style={{ width: `${uploadLimit.percentageUsed}%` }}
+                        ></div>
+                      </div>
+                      <div className="limit-message">
+                        {uploadLimit.statusMessage}
+                      </div>
+                      {uploadLimit.isAtLimit && (
+                        <div className="limit-reset">
+                          Next reset in: {uploadLimit.resetIn}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 <div className="button-group">
 
                     <img src="/cancelButton.webp" alt="Cancelar" onClick={onClose} className="cancel-button" />
                     
                     <img 
                         src="/uploadSimpleButton.webp" 
-                                                 alt={isSubmitting ? 'Subiendo...' : 'Subir Sticker'}
+                                                 alt={isSubmitting ? 'Uploading...' : 'Upload Sticker'}
                          onClick={(e) => {
                            e.preventDefault();
                            handleSubmit(e);
                          }}
-                         className={`upload-button ${isSubmitting || !file || !name.trim() || !description.trim() ? 'disabled' : ''}`}
+                         className={`upload-button ${
+                           isSubmitting || 
+                           !file || 
+                           !name.trim() || 
+                           !description.trim() || 
+                           uploadLimit.isAtLimit || 
+                           uploadLimit.loading 
+                           ? 'disabled' : ''
+                         }`}
                     />
                 </div>
           </div>

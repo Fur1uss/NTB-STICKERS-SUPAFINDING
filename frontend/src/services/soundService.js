@@ -29,6 +29,13 @@ class SoundService {
     this.userHasInteracted = false;
     this.pendingMenuMusic = false;
 
+    // Estado global de mute
+    this.globalMuted = false;
+    this.previousVolumes = {
+      background: 0.3,
+      menu: 0.2
+    };
+
     // Inicializar listener para primera interacción
     this.initUserInteractionListener();
   }
@@ -125,7 +132,13 @@ class SoundService {
       
       this.backgroundMusic = new Audio(`/sounds/music/${musicFileName}`);
       this.backgroundMusic.loop = true; // Reproducir en bucle
-      this.backgroundMusic.volume = 0.1; // Volumen bajo (10%)
+      this.applyMuteState(this.backgroundMusic, 'background'); // Aplicar estado de mute
+      
+      // Si no está silenciado, establecer volumen normal
+      if (!this.globalMuted) {
+        this.backgroundMusic.volume = 0.3; // Volumen normal (30%)
+        this.previousVolumes.background = 0.3;
+      }
       
       // Crear referencias a los handlers para poder removerlos después
       this.backgroundMusicEndedHandler = () => {
@@ -247,7 +260,13 @@ class SoundService {
       
       this.menuMusic = new Audio(`/sounds/music/${musicFileName}`);
       this.menuMusic.loop = true; // Reproducir en bucle
-      this.menuMusic.volume = 0.4; // Volumen moderado (40%)
+      this.applyMuteState(this.menuMusic, 'menu'); // Aplicar estado de mute
+      
+      // Si no está silenciado, establecer volumen normal
+      if (!this.globalMuted) {
+        this.menuMusic.volume = 0.2; // Volumen normal (20%)
+        this.previousVolumes.menu = 0.2;
+      }
       
       // Crear referencias a los handlers para poder removerlos después
       this.menuMusicEndedHandler = () => {
@@ -343,6 +362,60 @@ class SoundService {
       userHasInteracted: this.userHasInteracted,
       pendingMenuMusic: this.pendingMenuMusic
     };
+  }
+
+  /**
+   * Silencia toda la música del juego
+   */
+  mute() {
+    console.log('🔇 Silenciando toda la música');
+    this.globalMuted = true;
+    
+    // Guardar volúmenes actuales antes de silenciar
+    if (this.backgroundMusic) {
+      this.previousVolumes.background = this.backgroundMusic.volume;
+      this.backgroundMusic.volume = 0;
+    }
+    
+    if (this.menuMusic) {
+      this.previousVolumes.menu = this.menuMusic.volume;
+      this.menuMusic.volume = 0;
+    }
+  }
+
+  /**
+   * Reactiva toda la música del juego
+   */
+  unmute() {
+    console.log('🔊 Reactivando música');
+    this.globalMuted = false;
+    
+    // Restaurar volúmenes previos
+    if (this.backgroundMusic) {
+      this.backgroundMusic.volume = this.previousVolumes.background;
+    }
+    
+    if (this.menuMusic) {
+      this.menuMusic.volume = this.previousVolumes.menu;
+    }
+  }
+
+  /**
+   * Verifica si la música está silenciada
+   */
+  isMuted() {
+    return this.globalMuted;
+  }
+
+  /**
+   * Aplica el estado de mute al crear nuevos elementos de audio
+   */
+  applyMuteState(audioElement, type = 'background') {
+    if (this.globalMuted) {
+      audioElement.volume = 0;
+    } else {
+      audioElement.volume = this.previousVolumes[type] || (type === 'background' ? 0.3 : 0.2);
+    }
   }
 }
 

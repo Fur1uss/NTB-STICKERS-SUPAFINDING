@@ -11,6 +11,7 @@ import HomeScreen from './components/homeScreen/HomeScreen.jsx';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.jsx';
 import AuthCheck from './components/AuthCheck/AuthCheck.jsx';
 import OrientationGuard from './components/OrientationGuard/OrientationGuard.jsx';
+import SoundControl from './components/SoundControl/SoundControl.jsx';
 
 // Hooks
 import { useModerationPreload } from './hooks/useModerationPreload.js';
@@ -61,6 +62,8 @@ const App = () => {
         </Routes>
         {/*El BackgroundComponent solamente renderiza el fondo de la app (pared)*/}
         <BackgroundComponent />
+        {/*Control de sonido global*/}
+        <SoundControl />
       </BrowserRouter>
     </OrientationGuard>
   );

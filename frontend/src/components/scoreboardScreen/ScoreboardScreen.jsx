@@ -255,8 +255,8 @@ const ScoreboardScreen = () => {
       <div className="scoreboard-screen">
         <div className="loading-container">
           <div className="loading-spinner"></div>
-          <h2>Cargando resultados...</h2>
-          <p>Obteniendo datos de tu partida</p>
+          <h2>Loading results...</h2>
+          <p>Fetching your game data...</p>
         </div>
       </div>
     );
@@ -309,7 +309,7 @@ const ScoreboardScreen = () => {
           
           {userPosition && userPosition > 10 && (
             <div className="user-position-info">
-              <p>Tu posición global: #{userPosition}</p>
+              <p>Your global position: #{userPosition}</p>
             </div>
           )}
         </div>
@@ -321,22 +321,22 @@ const ScoreboardScreen = () => {
         <div className="infoUserGameContainer">
           <div className="game-stats">
             <div className="stat-item highlight">
-              <span className="stat-label">Tu Puntuación</span>
+              <span className="stat-label">Your Score</span>
               <span className="stat-value">{gameData?.game?.score || 0} pts</span>
             </div>
             
             <div className="stat-item">
-              <span className="stat-label">Tiempo de Juego</span>
+              <span className="stat-label">Game Time</span>
               <span className="stat-value">{formatGameTime(gameData?.game?.timePlayed)}</span>
             </div>
             
             <div className="stat-item">
-              <span className="stat-label">Stickers Encontrados</span>
+              <span className="stat-label">Collected Stickers</span>
               <span className="stat-value">{gameData?.statistics?.stickersFound || 0}</span>
             </div>
             
             <div className="stat-item">
-              <span className="stat-label">Jugador</span>
+              <span className="stat-label">Player</span>
               <span className="stat-value">{gameData?.game?.user?.username}</span>
             </div>
           </div>

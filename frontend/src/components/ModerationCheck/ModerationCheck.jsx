@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import moderationService from '../../services/moderationService.js';
 import './ModerationCheck.css';
 
 const ModerationCheck = ({ file, onModerationComplete, onClose, onUploadSuccess }) => {
+  const navigate = useNavigate();
   const [status, setStatus] = useState('loading'); // loading, analyzing, success, error, inappropriate
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [hasNotified, setHasNotified] = useState(false);
+  const [redirectCountdown, setRedirectCountdown] = useState(3);
 
   useEffect(() => {
     if (file && !hasNotified) {
@@ -26,6 +29,30 @@ const ModerationCheck = ({ file, onModerationComplete, onClose, onUploadSuccess 
       };
     }
   }, [file, hasNotified]);
+
+  // Efecto para redirección automática cuando la imagen es aprobada
+  useEffect(() => {
+    if (status === 'success') {
+      // Iniciar countdown de 3 segundos
+      const countdownInterval = setInterval(() => {
+        setRedirectCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(countdownInterval);
+            // Redireccionar a la página principal
+            console.log('🏠 Redirigiendo a la página principal...');
+            navigate('/');
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      // Cleanup del interval
+      return () => {
+        clearInterval(countdownInterval);
+      };
+    }
+  }, [status, navigate]);
 
   /**
    * Realiza la moderación de la imagen
@@ -64,17 +91,16 @@ const ModerationCheck = ({ file, onModerationComplete, onClose, onUploadSuccess 
 
       if (moderationResult.isAppropriate) {
         setStatus('success');
+        // NO llamar onModerationComplete aquí para evitar cerrar el UnfoldingBoard
+        // La redirección se manejará automáticamente
       } else {
         setStatus('inappropriate');
-      }
-
-      // Notificar al componente padre solo una vez
-      if (!hasNotified) {
-        console.log('📞 Notificando resultado de moderación al componente padre');
-        setHasNotified(true);
-        onModerationComplete(moderationResult);
-      } else {
-        console.log('🛑 Moderación ya notificada, ignorando llamada duplicada');
+        // Solo notificar al componente padre si NO es apropiada
+        if (!hasNotified) {
+          console.log('📞 Notificando resultado de moderación (inapropiada) al componente padre');
+          setHasNotified(true);
+          onModerationComplete(moderationResult);
+        }
       }
 
     } catch (error) {
@@ -123,10 +149,10 @@ const ModerationCheck = ({ file, onModerationComplete, onClose, onUploadSuccess 
         return (
           <div className="moderation-check-content">
             <div className="loading-spinner"></div>
-            <h2>Verificando contenido...</h2>
-            <p>Estamos analizando tu imagen</p>
+            <h2>Checking image...</h2>
+            <p>We're analyzing your image</p>
             <p style={{ fontSize: '14px', color: '#888', marginTop: '10px' }}>
-              Esto puede tomar unos segundos
+              This may take a few seconds
             </p>
           </div>
         );
@@ -135,10 +161,10 @@ const ModerationCheck = ({ file, onModerationComplete, onClose, onUploadSuccess 
         return (
           <div className="moderation-check-content">
             <div className="loading-spinner"></div>
-            <h2>Analizando imagen...</h2>
-            <p>Verificando contenido apropiado</p>
+            <h2>Analyzing image...</h2>
+            <p>Checking for appropriate content</p>
             <p style={{ fontSize: '14px', color: '#888', marginTop: '10px' }}>
-              Procesando {progress}%
+              Processing {progress}%
             </p>
           </div>
         );
@@ -147,22 +173,22 @@ const ModerationCheck = ({ file, onModerationComplete, onClose, onUploadSuccess 
         return (
           <div className="moderation-check-content success">
             <div className="success-icon">✅</div>
-            <h2>¡Imagen apropiada!</h2>
-            <p>Tu sticker ha pasado la verificación de moderación</p>
+            <h2>Image Approved!</h2>
             {result && (
               <div className="moderation-details">
-                <p><strong>Categoría principal:</strong> {result.dominantCategory}</p>
-                <p><strong>Confianza:</strong> {result.confidence}%</p>
+                <p><strong>Main Category:</strong> {result.dominantCategory}</p>
+                <p><strong>Confidence:</strong> {result.confidence}%</p>
               </div>
             )}
+            <div className="redirect-info">
+              <p>Redirecting to home in <strong>{redirectCountdown}</strong> seconds...</p>
+            </div>
             <button className="moderation-button" onClick={() => {
-              // El upload ya se inició automáticamente, notificar éxito y cerrar
-              if (onUploadSuccess) {
-                onUploadSuccess();
-              }
-              handleClose();
+              // Redireccionar inmediatamente si el usuario hace clic
+              console.log('🏠 Redirección manual a la página principal...');
+              navigate('/');
             }}>
-              Continuar
+              Go to Home Now
             </button>
           </div>
         );
@@ -171,15 +197,15 @@ const ModerationCheck = ({ file, onModerationComplete, onClose, onUploadSuccess 
         return (
           <div className="moderation-check-content inappropriate">
             <div className="inappropriate-icon">🚫</div>
-            <h2>Contenido inapropiado detectado</h2>
-            <p>Tu imagen no cumple con las políticas de contenido</p>
+            <h2>Inappropriate Content Detected</h2>
+            <p>Your image does not comply with content policies</p>
             {result && (
               <div className="moderation-details">
-                <p><strong>Categoría detectada:</strong> {result.dominantCategory}</p>
-                <p><strong>Confianza:</strong> {result.confidence}%</p>
-                <p><strong>Umbral:</strong> {result.threshold}%</p>
+                <p><strong>Detected Category:</strong> {result.dominantCategory}</p>
+                <p><strong>Confidence:</strong> {result.confidence}%</p>
+                <p><strong>Threshold:</strong> {result.threshold}%</p>
                 <div className="category-breakdown">
-                  <h4>Desglose por categorías:</h4>
+                  <h4>Category Breakdown:</h4>
                   {Object.entries(result.percentages).map(([category, percentage]) => (
                     <div key={category} className="category-item">
                       <span className="category-name">{category}:</span>
@@ -190,7 +216,7 @@ const ModerationCheck = ({ file, onModerationComplete, onClose, onUploadSuccess 
               </div>
             )}
             <button className="moderation-button inappropriate" onClick={() => handleClose()}>
-              Intentar con otra imagen
+              Try Another Image
             </button>
           </div>
         );
@@ -199,17 +225,17 @@ const ModerationCheck = ({ file, onModerationComplete, onClose, onUploadSuccess 
         return (
           <div className="moderation-check-content error">
             <div className="error-icon">❌</div>
-            <h2>Error en la moderación</h2>
-            <p>{error || 'Ocurrió un error al analizar la imagen'}</p>
+            <h2>Moderation Error</h2>
+            <p>{error || 'An error occurred while analyzing the image'}</p>
             <p style={{ fontSize: '14px', color: '#888', marginTop: '10px' }}>
-              💡 No te preocupes, puedes continuar subiendo tu imagen sin verificación.
+              💡 Don't worry, you can continue uploading your image without verification.
             </p>
             <div className="error-actions">
               <button className="moderation-button" onClick={performModeration}>
-                Reintentar
+                Retry
               </button>
               <button className="moderation-button secondary" onClick={() => handleClose()}>
-                Continuar sin moderación
+                Continue Without Moderation
               </button>
             </div>
           </div>
