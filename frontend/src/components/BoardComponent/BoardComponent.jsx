@@ -4,7 +4,12 @@ import './boardComponent.css';
 const BoardComponent = ({children}) => {
   return (
     <div className="boardContainer">
-        <div className='boardDyinamicContainer'>
+        <img 
+          src="/board.webp" 
+          alt="Board Background" 
+          className="boardImage"
+        />
+        <div className='boardDynamicContainer'>
             {children}
         </div>
     </div>

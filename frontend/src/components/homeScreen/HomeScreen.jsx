@@ -135,11 +135,13 @@ function HomeScreen() {
     // Efecto para iniciar música del menú
     useEffect(() => {
         // Iniciar música del menú al cargar el HomeScreen
+        console.log('🎵 HomeScreen montado - Iniciando música del menú');
         soundService.startMenuMusic();
         
-        // Cleanup: detener música del menú al desmontar el componente
+        // Cleanup: detener TODA la música al desmontar el componente
         return () => {
-            soundService.stopMenuMusic();
+            console.log('🔇 HomeScreen desmontado - Deteniendo toda la música');
+            soundService.stopAllMusic();
         };
     }, []);
 
@@ -152,6 +154,13 @@ function HomeScreen() {
             console.log('🎮 Botones de juego habilitados');
         }
     }, [user, backendUser, loading, isProcessing, error]);
+
+    // Función para manejar el clic en el botón Play
+    const handlePlayClick = () => {
+        console.log('🎮 Botón Play clickeado - Deteniendo música del menú');
+        soundService.stopMenuMusic(); // Detener música del menú antes de navegar
+        navigate("/play");
+    };
 
     const handleLogin = async () => {
         try {
@@ -240,12 +249,12 @@ function HomeScreen() {
                                     </div>
                                 ) : backendUser && user ? (
                                     <>
-                                        <img src="/playbutton.webp" onClick={() => navigate("/play")} alt="" className="btn" />
+                                        <img src="/playbutton.webp" onClick={handlePlayClick} alt="" className="btn" />
                                         <img src="/howtobutton.webp" alt="" className="btn" onClick={() => setShowBoard(true)} />
                                     </>
                                 ) : backendUser ? (
                                     <>
-                                        <img src="/playbutton.webp" onClick={() => navigate("/play")} alt="" className="btn" />
+                                        <img src="/playbutton.webp" onClick={handlePlayClick} alt="" className="btn" />
                                         <img src="/howtobutton.webp" alt="" className="btn" onClick={() => setShowBoard(true)} />
                                     </>
                                 ) : (

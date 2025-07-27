@@ -105,16 +105,20 @@ export const useGameLogic = (userId) => {
     console.log('📦 Stickers disponibles del backend:', stickers.length);
 
     try {
-      // Crear mapa de stickers por NOMBRE para encontrar archivos visuales
-      const stickersByName = new Map();
+      // Crear mapa de stickers por URL del archivo para encontrar archivos visuales
+      const stickersByUrl = new Map();
       stickers.forEach(sticker => {
-        // Si hay múltiples stickers con el mismo nombre, solo usar uno
-        if (!stickersByName.has(sticker.namesticker)) {
-          stickersByName.set(sticker.namesticker, sticker);
+        // Extraer el nombre del archivo de la URL para hacer el match
+        if (sticker.urlsticker) {
+          const fileName = sticker.urlsticker.split('/').pop();
+          // Si hay múltiples stickers con el mismo archivo, solo usar uno
+          if (!stickersByUrl.has(fileName)) {
+            stickersByUrl.set(fileName, sticker);
+          }
         }
       });
 
-      console.log('🎯 Stickers únicos por nombre:', stickersByName.size);
+      console.log('🎯 Stickers únicos por archivo:', stickersByUrl.size);
 
       // Obtener archivos del bucket para visualización (límite optimizado)
       const { data: files, error: listError } = await supabase.storage
@@ -127,15 +131,15 @@ export const useGameLogic = (userId) => {
       const visualStickers = [];
       const placedStickers = [];
 
-      // Filtrar archivos y usar solo los que tienen match en la DB
+      // Filtrar archivos y usar solo los que tienen match en la DB por nombre de archivo
       files
         .filter(file => file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i))
-        .filter(file => stickersByName.has(file.name))
+        .filter(file => stickersByUrl.has(file.name))
         .forEach((file) => {
-          // Obtener el sticker DB correspondiente (único por nombre)
-          const dbSticker = stickersByName.get(file.name);
+          // Obtener el sticker DB correspondiente (único por archivo)
+          const dbSticker = stickersByUrl.get(file.name);
           
-          console.log(`🎯 Mapeando archivo: ${file.name} -> DB ID: ${dbSticker.id}`);
+          console.log(`🎯 Mapeando archivo: ${file.name} -> DB ID: ${dbSticker.id} (${dbSticker.namesticker})`);
 
           const { data } = supabase.storage
             .from('stickers')

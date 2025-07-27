@@ -10,6 +10,7 @@ import JustAPlantComponent from './justAPlantComponent/JustAPlantComponent.jsx'
 import HomeScreen from './components/homeScreen/HomeScreen.jsx';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.jsx';
 import AuthCheck from './components/AuthCheck/AuthCheck.jsx';
+import OrientationGuard from './components/OrientationGuard/OrientationGuard.jsx';
 
 //Screens
 import PlayWrapper from "./components/PlayWrapper/PlayWrapper.jsx";
@@ -18,41 +19,43 @@ import ScoreboardScreen from "./components/scoreboardScreen/ScoreboardScreen.jsx
 createRoot(document.getElementById('root')).render(
   
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        {/* Ruta principal: planta fuera de la pizarra */}
-        <Route path='/' element={
-          <>
-            <JustAPlantComponent />
-            <BoardComponent>
-              <HomeScreen />
-            </BoardComponent>
-          </>
-        } />
-
-        {/* Ruta de verificación de autenticación */}
-        <Route path='/auth-check' element={<AuthCheck />} />
-        
-        {/* Rutas protegidas que requieren autenticación */}
-        <Route path='/play' element={
-          <ProtectedRoute>
-            <PlayWrapper />
-          </ProtectedRoute>
-        } />
-        <Route path='/scoreboard' element={
-          <ProtectedRoute>
+    <OrientationGuard>
+      <BrowserRouter>
+        <Routes>
+          {/* Ruta principal: planta fuera de la pizarra */}
+          <Route path='/' element={
             <>
               <JustAPlantComponent />
               <BoardComponent>
-                <ScoreboardScreen />
+                <HomeScreen />
               </BoardComponent>
             </>
-          </ProtectedRoute>
-        } />
-        <Route path='*' element={<div>ERROR 404</div>} />
-      </Routes>
-      {/*El BackgroundComponent solamente renderiza el fondo de la app (pared)*/}
-      <BackgroundComponent />
-    </BrowserRouter>
+          } />
+
+          {/* Ruta de verificación de autenticación */}
+          <Route path='/auth-check' element={<AuthCheck />} />
+          
+          {/* Rutas protegidas que requieren autenticación */}
+          <Route path='/play' element={
+            <ProtectedRoute>
+              <PlayWrapper />
+            </ProtectedRoute>
+          } />
+          <Route path='/scoreboard' element={
+            <ProtectedRoute>
+              <>
+                <JustAPlantComponent />
+                <BoardComponent>
+                  <ScoreboardScreen />
+                </BoardComponent>
+              </>
+            </ProtectedRoute>
+          } />
+          <Route path='*' element={<div>ERROR 404</div>} />
+        </Routes>
+        {/*El BackgroundComponent solamente renderiza el fondo de la app (pared)*/}
+        <BackgroundComponent />
+      </BrowserRouter>
+    </OrientationGuard>
   </StrictMode>
 )

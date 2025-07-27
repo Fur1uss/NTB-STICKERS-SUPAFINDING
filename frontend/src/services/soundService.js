@@ -35,15 +35,20 @@ class SoundService {
 
   /**
    * Inicializa el listener para detectar la primera interacción del usuario
+   * MEJORADO: Con limpieza de música anterior antes de iniciar
    */
   initUserInteractionListener() {
     const handleFirstInteraction = () => {
       console.log('🎵 Primera interacción del usuario detectada');
       this.userHasInteracted = true;
       
-      // Si había música del menú pendiente, iniciarla ahora
+      // Si había música del menú pendiente, detener todo primero e iniciarla
       if (this.pendingMenuMusic) {
-        this.startMenuMusic();
+        console.log('🔄 Iniciando música del menú pendiente...');
+        this.stopAllMusic(); // Limpiar todo primero
+        setTimeout(() => {
+          this.startMenuMusic();
+        }, 100); // Pequeño delay para asegurar limpieza
         this.pendingMenuMusic = false;
       }
       
@@ -87,21 +92,55 @@ class SoundService {
   }
 
   /**
+   * Detiene TODA la música (tanto del menú como del juego)
+   * MEJORADO: Con logging detallado y limpieza completa
+   */
+  stopAllMusic() {
+    console.log('🔇 === DETENIENDO TODA LA MÚSICA ===');
+    
+    // Detener música del menú
+    this.stopMenuMusic();
+    
+    // Detener música de fondo
+    this.stopBackgroundMusic();
+    
+    // Limpiar estados pendientes
+    this.pendingMenuMusic = false;
+    
+    console.log('✅ Toda la música detenida y estados limpiados');
+  }
+
+  /**
    * Inicia la música de fondo durante la partida
+   * MEJORADO: Detiene automáticamente la música del menú
    * @param {string} musicFileName - Nombre del archivo de música (opcional)
    */
   startBackgroundMusic(musicFileName = 'backgroundMusic.mp3') {
     try {
-      if (this.isMusicPlaying) {
-        console.log('🎵 La música de fondo ya está reproduciéndose');
-        return;
-      }
+      // SIEMPRE detener música anterior primero
+      this.stopMenuMusic();
+      this.stopBackgroundMusic();
 
       console.log(`🎵 Iniciando música de fondo: ${musicFileName}`);
       
       this.backgroundMusic = new Audio(`/sounds/music/${musicFileName}`);
       this.backgroundMusic.loop = true; // Reproducir en bucle
-      this.backgroundMusic.volume = 0.1; // Volumen bajo (30%)
+      this.backgroundMusic.volume = 0.1; // Volumen bajo (10%)
+      
+      // Crear referencias a los handlers para poder removerlos después
+      this.backgroundMusicEndedHandler = () => {
+        console.log('🔄 Música de fondo terminada');
+        this.isMusicPlaying = false;
+      };
+      
+      this.backgroundMusicErrorHandler = (e) => {
+        console.error('❌ Error cargando música de fondo:', e);
+        this.isMusicPlaying = false;
+      };
+      
+      // Agregar event listeners
+      this.backgroundMusic.addEventListener('ended', this.backgroundMusicEndedHandler);
+      this.backgroundMusic.addEventListener('error', this.backgroundMusicErrorHandler);
       
       this.backgroundMusic.play().catch(error => {
         console.error('❌ Error reproduciendo música de fondo:', error);
@@ -109,16 +148,7 @@ class SoundService {
       });
       
       this.isMusicPlaying = true;
-
-      // Manejar eventos
-      this.backgroundMusic.addEventListener('ended', () => {
-        this.isMusicPlaying = false;
-      });
-
-      this.backgroundMusic.addEventListener('error', (e) => {
-        console.error('❌ Error cargando música de fondo:', e);
-        this.isMusicPlaying = false;
-      });
+      console.log('✅ Música de fondo iniciada correctamente');
 
     } catch (error) {
       console.error('❌ Error iniciando música de fondo:', error);
@@ -127,17 +157,34 @@ class SoundService {
 
   /**
    * Detiene la música de fondo
+   * MEJORADO: Limpieza más robusta y manejo de errores
    */
   stopBackgroundMusic() {
     try {
-      if (this.backgroundMusic && this.isMusicPlaying) {
-        console.log('🔇 Deteniendo música de fondo');
+      console.log('🔇 Intentando detener música de fondo...');
+      
+      if (this.backgroundMusic) {
+        // Pausar y resetear sin importar el estado
         this.backgroundMusic.pause();
         this.backgroundMusic.currentTime = 0;
-        this.isMusicPlaying = false;
+        
+        // Remover event listeners para evitar memory leaks
+        this.backgroundMusic.removeEventListener('ended', this.backgroundMusicEndedHandler);
+        this.backgroundMusic.removeEventListener('error', this.backgroundMusicErrorHandler);
+        
+        // Limpiar referencia
+        this.backgroundMusic = null;
+        console.log('✅ Música de fondo detenida y limpiada');
       }
+      
+      // Siempre resetear el estado
+      this.isMusicPlaying = false;
+      
     } catch (error) {
       console.error('❌ Error deteniendo música de fondo:', error);
+      // Forzar reset del estado incluso si hay error
+      this.isMusicPlaying = false;
+      this.backgroundMusic = null;
     }
   }
 
@@ -180,15 +227,11 @@ class SoundService {
 
   /**
    * Inicia la música del menú principal
+   * MEJORADO: Detiene automáticamente toda la música anterior
    * @param {string} musicFileName - Nombre del archivo de música del menú
    */
   startMenuMusic(musicFileName = 'menuMusic.mp3') {
     try {
-      if (this.isMenuMusicPlaying) {
-        console.log('🎵 La música del menú ya está reproduciéndose');
-        return;
-      }
-
       // Si el usuario no ha interactuado, marcar como pendiente
       if (!this.userHasInteracted) {
         console.log('🎵 Música del menú marcada como pendiente (esperando interacción del usuario)');
@@ -196,11 +239,30 @@ class SoundService {
         return;
       }
 
+      // SIEMPRE detener música anterior primero
+      this.stopBackgroundMusic();
+      this.stopMenuMusic();
+
       console.log(`🎵 Iniciando música del menú: ${musicFileName}`);
       
       this.menuMusic = new Audio(`/sounds/music/${musicFileName}`);
       this.menuMusic.loop = true; // Reproducir en bucle
       this.menuMusic.volume = 0.4; // Volumen moderado (40%)
+      
+      // Crear referencias a los handlers para poder removerlos después
+      this.menuMusicEndedHandler = () => {
+        console.log('🔄 Música del menú terminada');
+        this.isMenuMusicPlaying = false;
+      };
+      
+      this.menuMusicErrorHandler = (e) => {
+        console.error('❌ Error cargando música del menú:', e);
+        this.isMenuMusicPlaying = false;
+      };
+      
+      // Agregar event listeners
+      this.menuMusic.addEventListener('ended', this.menuMusicEndedHandler);
+      this.menuMusic.addEventListener('error', this.menuMusicErrorHandler);
       
       this.menuMusic.play().catch(error => {
         console.error('❌ Error reproduciendo música del menú:', error);
@@ -208,16 +270,7 @@ class SoundService {
       });
       
       this.isMenuMusicPlaying = true;
-
-      // Manejar eventos
-      this.menuMusic.addEventListener('ended', () => {
-        this.isMenuMusicPlaying = false;
-      });
-
-      this.menuMusic.addEventListener('error', (e) => {
-        console.error('❌ Error cargando música del menú:', e);
-        this.isMenuMusicPlaying = false;
-      });
+      console.log('✅ Música del menú iniciada correctamente');
 
     } catch (error) {
       console.error('❌ Error iniciando música del menú:', error);
@@ -226,34 +279,70 @@ class SoundService {
 
   /**
    * Detiene la música del menú
+   * MEJORADO: Limpieza más robusta y manejo de errores
    */
   stopMenuMusic() {
     try {
-      if (this.menuMusic && this.isMenuMusicPlaying) {
-        console.log('🔇 Deteniendo música del menú');
+      console.log('🔇 Intentando detener música del menú...');
+      
+      if (this.menuMusic) {
+        // Pausar y resetear sin importar el estado
         this.menuMusic.pause();
         this.menuMusic.currentTime = 0;
-        this.isMenuMusicPlaying = false;
+        
+        // Remover event listeners para evitar memory leaks
+        this.menuMusic.removeEventListener('ended', this.menuMusicEndedHandler);
+        this.menuMusic.removeEventListener('error', this.menuMusicErrorHandler);
+        
+        // Limpiar referencia
+        this.menuMusic = null;
+        console.log('✅ Música del menú detenida y limpiada');
       }
+      
+      // Siempre resetear el estado
+      this.isMenuMusicPlaying = false;
+      this.pendingMenuMusic = false; // También limpiar música pendiente
+      
     } catch (error) {
       console.error('❌ Error deteniendo música del menú:', error);
+      // Forzar reset del estado incluso si hay error
+      this.isMenuMusicPlaying = false;
+      this.pendingMenuMusic = false;
+      this.menuMusic = null;
     }
   }
 
   /**
    * Cambia de música del menú a música del juego
+   * MEJORADO: Con logging para debug
    */
   switchToGameMusic() {
+    console.log('🔄 Cambiando a música del juego');
     this.stopMenuMusic();
     this.startBackgroundMusic();
   }
 
   /**
    * Cambia de música del juego a música del menú
+   * MEJORADO: Con logging para debug
    */
   switchToMenuMusic() {
+    console.log('🔄 Cambiando a música del menú');
     this.stopBackgroundMusic();
     this.startMenuMusic();
+  }
+
+  /**
+   * Verifica el estado actual de la música
+   * NUEVO: Para debugging
+   */
+  getMusicStatus() {
+    return {
+      menuMusicPlaying: this.isMenuMusicPlaying,
+      backgroundMusicPlaying: this.isMusicPlaying,
+      userHasInteracted: this.userHasInteracted,
+      pendingMenuMusic: this.pendingMenuMusic
+    };
   }
 }
 

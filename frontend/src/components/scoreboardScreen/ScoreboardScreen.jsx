@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import GameAPIService from '../../services/gameService';
+import soundService from '../../services/soundService';
 import UploadStickerSimple from '../UploadSticker/UploadStickerSimple';
 import UnfoldingBoard from '../UnfoldingBoard/UnfoldingBoard';
 import "./scoreboardScreen.css";
@@ -98,7 +99,25 @@ const ScoreboardScreen = () => {
   };
 
   useEffect(() => {
+    console.log('🏆 ScoreboardScreen montado - Configurando audio y cargando datos');
+    
+    // Detener cualquier música que esté reproduciéndose
+    soundService.stopAllMusic();
+    
+    // Pequeño delay antes de iniciar música del menú para asegurar limpieza
+    const musicTimeout = setTimeout(() => {
+      console.log('🎵 Iniciando música del menú en ScoreboardScreen');
+      soundService.startMenuMusic();
+    }, 200);
+    
     loadScoreboardData();
+    
+    // Cleanup: Detener música al desmontar
+    return () => {
+      console.log('🏆 ScoreboardScreen desmontado - Deteniendo música');
+      clearTimeout(musicTimeout);
+      soundService.stopAllMusic();
+    };
   }, [gameId]);
 
   /**
@@ -113,6 +132,9 @@ const ScoreboardScreen = () => {
    * Navegar a nueva partida
    */
   const handleHomeMenuu = () => {
+    console.log('🏠 Navegando al home desde scoreboard');
+    // No necesitamos iniciar música aquí porque HomeScreen lo hará automáticamente
+    // al montarse y detener cualquier música anterior
     navigate('/');
   };
 
@@ -191,7 +213,7 @@ const ScoreboardScreen = () => {
     <div className="scoreboard-screen">
       {/* Título del Scoreboard */}
       <div className="scoreboardContainer">
-        <div className="titleContainer">
+        <div className="scoreTitleContainer">
           <img src="/scoreboardImage.webp" alt="Scoreboard" />
         </div>
         
