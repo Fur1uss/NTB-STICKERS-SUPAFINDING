@@ -15,7 +15,7 @@ export default function UnfoldingBoard({ open, children, onClose, showCloseButto
       const timer = setTimeout(() => {
         setIsVisible(false);
         setIsClosing(false);
-      }, 800); // Duration of the exit animation
+      }, 1200); // Duration of the exit animation
       return () => clearTimeout(timer);
     }
   }, [open]);

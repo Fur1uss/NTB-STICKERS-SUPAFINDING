@@ -39,6 +39,9 @@ export const useGameLogic = (userId) => {
   const initializingRef = useRef(false); // Prevenir inicializaciones duplicadas
   const endingGameRef = useRef(false); // Prevenir finalizaciones duplicadas
   const endGameRef = useRef(null); // Referencia para la función endGame
+  
+  // 🔒 Protección contra clics múltiples
+  const [isProcessingClick, setIsProcessingClick] = useState(false);
 
   /**
    * Inicializar el juego
@@ -440,9 +443,20 @@ export const useGameLogic = (userId) => {
   /**
    * Manejar click en sticker
    * MODIFICADO: Los stickers no se deshabilitan al ser encontrados
+   * NUEVO: Protección contra clics múltiples rápidos
    */
   const handleStickerClick = useCallback(async (sticker, event) => {
     if (gameState !== 'playing' || !targetSticker) return;
+
+    // 🔒 PROTECCIÓN CONTRA CLICS MÚLTIPLES RÁPIDOS
+    if (isProcessingClick || event.target.dataset.processing === 'true') {
+      console.log('🚫 Clic bloqueado - Procesamiento en curso');
+      return;
+    }
+
+    // Marcar como en procesamiento
+    setIsProcessingClick(true);
+    event.target.dataset.processing = 'true';
 
     console.log('\n🎯 === CLICK EN STICKER ===');
     console.log('📝 Sticker clickeado:', {
@@ -501,9 +515,14 @@ export const useGameLogic = (userId) => {
           }, 2000);
 
         } else if (result.alreadyFound) {
-          console.log('⚠️ Sticker ya encontrado anteriormente');
-          // Mostrar feedback visual
-          showIncorrectFeedback(event.target);
+          if (result.duplicate) {
+            console.log('🚫 Sticker registrado recientemente - Ignorando clic duplicado');
+            // No mostrar feedback visual para duplicados recientes
+          } else {
+            console.log('⚠️ Sticker ya encontrado anteriormente');
+            // Mostrar feedback visual
+            showIncorrectFeedback(event.target);
+          }
         }
 
       } catch (error) {
@@ -519,7 +538,16 @@ export const useGameLogic = (userId) => {
       console.log('   - Nombres: clickeado =', sticker.name, '| objetivo =', targetSticker.namesticker);
       showIncorrectFeedback(event.target);
     }
-  }, [gameState, targetSticker, gameId, shuffleStickers]);
+
+    // 🔓 LIBERAR BLOQUEO DESPUÉS DE UN PEQUEÑO DELAY
+    setTimeout(() => {
+      setIsProcessingClick(false);
+      if (event.target) {
+        event.target.dataset.processing = 'false';
+      }
+    }, 500); // 500ms de protección
+
+  }, [gameState, targetSticker, gameId, shuffleStickers, isProcessingClick]);
 
   /**
    * Mostrar feedback visual para sticker incorrecto
