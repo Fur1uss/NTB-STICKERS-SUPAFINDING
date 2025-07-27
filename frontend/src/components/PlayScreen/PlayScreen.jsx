@@ -100,16 +100,16 @@ const PlayScreen = ({ onGameReady }) => {
         <div className="start-game-overlay">
           <div className="start-game-container">
             <div className="start-game-icon">🎮</div>
-            <h2>¡Listo para jugar!</h2>
-            <p>Tienes 90 segundos + tiempo bonus para encontrar los stickers</p>
-            <p className="game-rules">
-              • Encuentra el sticker objetivo<br/>
-              • Cada acierto suma +5 segundos<br/>
-              • ¡Intenta encontrar todos los que puedas!
-            </p>
+              <h2>Ready to play!</h2>
+              <p>You have 90 seconds + bonus time to find the stickers</p>
+              <p className="game-rules">
+                • Find the target sticker<br/>
+                • Each correct match adds +5 seconds<br/>
+                • Try to find as many as you can!
+              </p>
             <button onClick={startGame} className="start-button">
               <img src="/playbutton.webp" alt="Iniciar juego" />
-              <span>Iniciar Juego</span>
+              <span>Start Game</span>
             </button>
           </div>
         </div>
@@ -117,7 +117,7 @@ const PlayScreen = ({ onGameReady }) => {
         {/* Mostrar preview del objetivo */}
         {targetSticker && (
           <div className="preview-target">
-            <h3>Tu primer objetivo:</h3>
+            <h3>Your first target:</h3>
             <img src={targetSticker.urlsticker} alt={targetSticker.namesticker} />
           </div>
         )}

@@ -1,24 +1,24 @@
-.shuffle-button {
-  background: #ff6b6b;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 10px;
+.shuffle-button  {
   cursor: pointer;
-  font-family: 'Fredericka the Great', cursive;
-  font-size: 1rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: transparent!important;
+
+  width: 18%;
+  height: auto;
 
   position: absolute;
 
-    bottom: 20%;
-    right: 10%;
+    top: 48%;
+    left: 80%;
 
 }
 
 .shuffle-button:hover {
-  background: #ff5252;
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+
+    filter: drop-shadow(0 0 0 white)
+    drop-shadow(1px 0 0 white)
+    drop-shadow(-3px 0 0 white)
+    drop-shadow(0 3px 0 white)
+    drop-shadow(0 -3px 0 white);
 }
