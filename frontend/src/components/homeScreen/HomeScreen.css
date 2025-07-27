@@ -49,20 +49,25 @@
 
     position: absolute;
 
+    /* Animación de flotación */
+    animation: float 3s ease-in-out infinite;
 }
 
 .sticker01{
     top: -5%;
     left: -5%;
+    animation-delay: 0s;
 }
 .sticker02{
     top: 10%;
     left: 10%;
+    animation-delay: 1s;
 }
 .sticker03{
     width: 90%;
     top: 40%;
     left: -5%;
+    animation-delay: 2s;
 }
 
 
@@ -190,6 +195,19 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Animación de flotación suave para los stickers */
+@keyframes float {
+    0% { 
+        transform: translateY(0px);
+    }
+    50% { 
+        transform: translateY(-15px);
+    }
+    100% { 
+        transform: translateY(0px);
+    }
 }
 
 .error-message {

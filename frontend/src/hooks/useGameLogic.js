@@ -3,6 +3,7 @@ import GameAPIService from '../services/gameService.js';
 import { getAllStickersFromDB } from '../utils/gameUtils.js';
 import supabase from '../config/supabaseClient.js';
 import { useNavigate } from 'react-router-dom';
+import soundService from '../services/soundService.js';
 
 /**
  * Hook personalizado para manejar toda la lógica del juego
@@ -225,6 +226,9 @@ export const useGameLogic = (userId) => {
     console.log('🔄 Cambiando estado a "finished"...');
     setGameState('finished');
 
+    // 🔇 Detener música de fondo
+    soundService.stopBackgroundMusic();
+
     console.log('🧹 Limpiando timers...');
     // Limpiar timers
     if (gameTimerRef.current) {
@@ -341,6 +345,9 @@ export const useGameLogic = (userId) => {
     setTimeRemaining(90); // 90 segundos de juego
     setTimeBonus(0);
     setFoundStickers([]);
+    
+    // 🎵 Cambiar de música del menú a música del juego
+    soundService.switchToGameMusic();
     
     console.log('📅 Tiempo de inicio establecido:', new Date(startTime).toISOString());
     
@@ -482,6 +489,9 @@ export const useGameLogic = (userId) => {
           // Mostrar feedback de éxito
           setFoundStickerName(targetSticker.descriptionsticker || targetSticker.namesticker);
           setShowSuccess(true);
+
+          // 🔊 Reproducir sonido aleatorio al encontrar sticker
+          soundService.playRandomStickerSound();
 
           // Establecer nuevo objetivo (puede ser el mismo sticker)
           if (result.nextTarget) {

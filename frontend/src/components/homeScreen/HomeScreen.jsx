@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import supabase from "../../config/supabaseClient";
 import authService from "../../services/authService";
+import soundService from "../../services/soundService";
 import './HomeScreen.css';
 import { useNavigate } from "react-router-dom";
 
@@ -130,6 +131,17 @@ function HomeScreen() {
             subscription?.unsubscribe();
         };
     }, []); // Dependencias vacías - solo ejecutar una vez
+
+    // Efecto para iniciar música del menú
+    useEffect(() => {
+        // Iniciar música del menú al cargar el HomeScreen
+        soundService.startMenuMusic();
+        
+        // Cleanup: detener música del menú al desmontar el componente
+        return () => {
+            soundService.stopMenuMusic();
+        };
+    }, []);
 
     // Efecto para mostrar mensaje de bienvenida cuando el usuario está completamente configurado
     useEffect(() => {
