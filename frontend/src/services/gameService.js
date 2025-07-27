@@ -90,6 +90,13 @@ export class GameAPIService {
           console.log('⚠️ Sticker ya encontrado anteriormente');
           return { success: false, alreadyFound: true, message: data.message };
         }
+        
+        // Si es un duplicado reciente, no es un error crítico
+        if (response.status === 429) {
+          console.log('🚫 Sticker registrado recientemente (duplicado)');
+          return { success: false, alreadyFound: true, duplicate: true, message: data.message };
+        }
+        
         throw new Error(data.message || `Error ${response.status}: ${response.statusText}`);
       }
 

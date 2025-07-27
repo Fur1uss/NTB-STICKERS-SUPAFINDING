@@ -153,10 +153,26 @@ export class GameService {
         throw checkError;
       }
 
-      // MODIFICACIÓN: Ya no bloqueamos stickers repetidos, solo los registramos
+      // 🔒 PROTECCIÓN CONTRA REGISTROS DUPLICADOS EN LA MISMA PARTIDA
       if (existingRecord && existingRecord.length > 0) {
-        console.log('⚠️  Sticker ya encontrado anteriormente en esta partida, pero permitiendo repetición');
-        // No retornamos error, continuamos con el proceso
+        console.log('⚠️  Sticker ya encontrado anteriormente en esta partida');
+        console.log('   📊 Registros existentes:', existingRecord.length);
+        
+        // Verificar si el registro es muy reciente (últimos 2 segundos)
+        const lastRecord = existingRecord[existingRecord.length - 1];
+        const timeDiff = Date.now() - new Date(lastRecord.created_at).getTime();
+        
+        if (timeDiff < 2000) { // 2 segundos
+          console.log('🚫 Registro duplicado detectado (muy reciente), bloqueando...');
+          return {
+            success: false,
+            alreadyFound: true,
+            message: 'Sticker ya registrado recientemente',
+            duplicate: true
+          };
+        }
+        
+        console.log('✅ Sticker ya encontrado pero permitiendo repetición (pasó tiempo suficiente)');
       }
 
       // 4. Registrar el sticker en la partida

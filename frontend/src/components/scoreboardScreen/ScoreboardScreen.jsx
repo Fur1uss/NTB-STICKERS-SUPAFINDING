@@ -178,7 +178,7 @@ const ScoreboardScreen = () => {
             <button onClick={loadScoreboardData} className="retry-button">
               Reintentar
             </button>
-            <button onClick={handleGoHome} className="home-button">
+            <button onClick={handleHomeMenuu} className="home-button">
               Ir al Inicio
             </button>
           </div>

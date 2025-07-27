@@ -102,9 +102,20 @@ export class GameController {
         parseInt(stickerId)
       );
 
-      // MODIFICADO: Ya no bloqueamos stickers repetidos
+      // MODIFICADO: Manejo mejorado de stickers repetidos
       if (!result.success) {
         console.log('⚠️  Error controlado en el sticker');
+        
+        // Si es un duplicado reciente, usar código 429 (Too Many Requests)
+        if (result.duplicate) {
+          return res.status(429).json({
+            success: false,
+            message: result.message,
+            alreadyFound: result.alreadyFound || false,
+            duplicate: true
+          });
+        }
+        
         return res.status(409).json({
           success: false,
           message: result.message,

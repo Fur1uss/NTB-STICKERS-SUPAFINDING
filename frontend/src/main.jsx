@@ -8,6 +8,8 @@ import BackgroundComponent from './components/backgroundComponent/BackgroundComp
 import BoardComponent from './components/BoardComponent/BoardComponent.jsx';
 import JustAPlantComponent from './justAPlantComponent/JustAPlantComponent.jsx'
 import HomeScreen from './components/homeScreen/HomeScreen.jsx';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.jsx';
+import AuthCheck from './components/AuthCheck/AuthCheck.jsx';
 
 //Screens
 import PlayWrapper from "./components/PlayWrapper/PlayWrapper.jsx";
@@ -28,16 +30,24 @@ createRoot(document.getElementById('root')).render(
           </>
         } />
 
-        {/* Rutas que usan solo la pizarra */}
-        <Route path='/play' element={<PlayWrapper />} />
+        {/* Ruta de verificación de autenticación */}
+        <Route path='/auth-check' element={<AuthCheck />} />
+        
+        {/* Rutas protegidas que requieren autenticación */}
+        <Route path='/play' element={
+          <ProtectedRoute>
+            <PlayWrapper />
+          </ProtectedRoute>
+        } />
         <Route path='/scoreboard' element={
-          <>
-            <JustAPlantComponent />
-            <BoardComponent>
-              <ScoreboardScreen />
-            </BoardComponent>
-          </>
-
+          <ProtectedRoute>
+            <>
+              <JustAPlantComponent />
+              <BoardComponent>
+                <ScoreboardScreen />
+              </BoardComponent>
+            </>
+          </ProtectedRoute>
         } />
         <Route path='*' element={<div>ERROR 404</div>} />
       </Routes>
