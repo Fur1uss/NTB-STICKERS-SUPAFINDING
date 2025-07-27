@@ -10,11 +10,11 @@ export const useUploadLimit = (userId) => {
   const [limitData, setLimitData] = useState({
     uploadsInPeriod: 0,
     canUpload: true,
-    remainingUploads: 3,
-    limit: 3,
-    timeWindowHours: 12,
+    remainingUploads: 1,
+    limit: 1,
+    timeWindowHours: 1,
     nextReset: null,
-    resetIn: '12h 0m',
+    resetIn: 'Disponible ahora',
     loading: true,
     error: null
   });
@@ -93,14 +93,14 @@ export const useUploadLimit = (userId) => {
     }
   }, [userId, checkLimit]);
 
-  // Auto-refresh cada 5 minutos para mantener datos actualizados
+  // Auto-refresh cada 1 minuto para mantener datos actualizados (más frecuente para 1 hora)
   useEffect(() => {
     if (!userId) return;
 
     const interval = setInterval(() => {
-      console.log('🔄 Auto-refresh del límite de uploads');
+      console.log('🔄 Auto-refresh del límite de uploads (1 hora)');
       checkLimit();
-    }, 5 * 60 * 1000); // 5 minutos
+    }, 1 * 60 * 1000); // 1 minuto
 
     return () => clearInterval(interval);
   }, [userId, checkLimit]);
@@ -123,9 +123,9 @@ export const useUploadLimit = (userId) => {
     
     // Mensajes para UI
     statusMessage: limitData.canUpload 
-      ? `${limitData.remainingUploads} uploads remaining` 
-      : `Upload limit reached. Reset in ${limitData.resetIn}`,
+      ? `Puedes subir 1 sticker` 
+      : `Límite alcanzado. Próximo upload en ${limitData.resetIn}`,
     
-    limitText: `${limitData.uploadsInPeriod}/${limitData.limit} uploads used (12h window)`
+    limitText: `${limitData.uploadsInPeriod}/${limitData.limit} uploads en la última hora`
   };
 };

@@ -14,7 +14,7 @@ import OrientationGuard from './components/OrientationGuard/OrientationGuard.jsx
 import SoundControl from './components/SoundControl/SoundControl.jsx';
 
 // Hooks
-import { useModerationPreload } from './hooks/useModerationPreload.js';
+// import { useModerationPreload } from './hooks/useModerationPreload.js'; // Comentado temporalmente
 
 //Screens
 import PlayWrapper from "./components/PlayWrapper/PlayWrapper.jsx";
@@ -23,7 +23,7 @@ import ScoreboardScreen from "./components/scoreboardScreen/ScoreboardScreen.jsx
 // Componente principal que incluye la precarga de moderación
 const App = () => {
   // Precargar el modelo de moderación en segundo plano
-  const { isPreloaded, isPreloading, error } = useModerationPreload();
+  // const { isPreloaded, isPreloading, error } = useModerationPreload(); // Comentado temporalmente
 
   return (
     <OrientationGuard>

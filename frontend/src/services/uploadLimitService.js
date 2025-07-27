@@ -1,125 +1,143 @@
-import supabase from '../config/supabaseClient';
+import supabase from '../config/supabaseClient.js';
 
 /**
  * Servicio para manejar límites de uploads de stickers
- * Límite: 3 stickers cada 12 horas por usuario
+ * LÍMITE: 1 sticker cada 1 hora por usuario
  */
 class UploadLimitService {
   constructor() {
-    this.UPLOAD_LIMIT = 3;
-    this.TIME_WINDOW_HOURS = 12;
+    this.UPLOAD_LIMIT = 1;           // 1 sticker por ventana
+    this.TIME_WINDOW_HOURS = 1;      // Ventana de 1 hora
   }
 
   /**
-   * Verifica cuántos stickers ha subido el usuario en las últimas 12 horas
+   * Verifica si el usuario puede subir un sticker basado en uploads de la última hora
    * @param {string} userId - ID del usuario
    * @returns {Promise<Object>} Información sobre el límite de uploads
    */
   async checkDailyLimit(userId) {
     try {
-      console.log('🔍 Verificando límite de uploads para usuario:', userId);
+      console.log('⏰ Verificando límite de 1 hora para usuario:', userId);
       
-      // Calcular timestamp de hace 12 horas
-      const twelveHoursAgo = new Date(Date.now() - (this.TIME_WINDOW_HOURS * 60 * 60 * 1000));
-      
-      console.log('⏰ Verificando uploads desde:', twelveHoursAgo.toISOString());
-
-      // Consultar Supabase para contar uploads del usuario en las últimas 12 horas
-      const { count, error } = await supabase
+      // Verificar uploads en la última hora usando la consulta optimizada
+      const { data: recentUploads, error } = await supabase
         .from('stickers')
-        .select('*', { count: 'exact', head: true })
+        .select('id, namesticker, created_at')
         .eq('iduser', userId)
-        .gte('created_at', twelveHoursAgo.toISOString());
+        .gte('created_at', new Date(Date.now() - (this.TIME_WINDOW_HOURS * 60 * 60 * 1000)).toISOString());
 
       if (error) {
-        console.error('❌ Error verificando límite de uploads:', error);
-        throw new Error('Error checking upload limit');
+        console.error('❌ Error verificando uploads recientes:', error);
+        throw new Error('Error checking recent uploads');
       }
 
-      const uploadsInPeriod = count || 0;
-      const canUpload = uploadsInPeriod < this.UPLOAD_LIMIT;
-      const remainingUploads = Math.max(0, this.UPLOAD_LIMIT - uploadsInPeriod);
+      const uploadsInLastHour = recentUploads?.length || 0;
+      const canUpload = uploadsInLastHour === 0; // Solo puede subir si NO hay uploads en 1 hora
+      const remainingUploads = canUpload ? 1 : 0;
 
-      // Calcular próximo reset (12 horas desde ahora)
-      const nextReset = new Date(Date.now() + (this.TIME_WINDOW_HOURS * 60 * 60 * 1000));
+      // Calcular cuándo podrá subir de nuevo
+      let nextAllowedTime = null;
+      let resetIn = 'Disponible ahora';
+      
+      if (!canUpload && recentUploads.length > 0) {
+        // Encontrar el upload más reciente y calcular cuándo expira el límite
+        const mostRecentUpload = new Date(recentUploads[0].created_at);
+        nextAllowedTime = new Date(mostRecentUpload.getTime() + (this.TIME_WINDOW_HOURS * 60 * 60 * 1000));
+        
+        const timeUntilReset = nextAllowedTime.getTime() - Date.now();
+        const minutesLeft = Math.floor(timeUntilReset / (1000 * 60));
+        const secondsLeft = Math.floor((timeUntilReset % (1000 * 60)) / 1000);
+        
+        resetIn = minutesLeft > 0 ? `${minutesLeft}m ${secondsLeft}s` : `${secondsLeft}s`;
+      }
 
       const result = {
-        uploadsInPeriod,
+        uploadsInPeriod: uploadsInLastHour,
         canUpload,
         remainingUploads,
         limit: this.UPLOAD_LIMIT,
         timeWindowHours: this.TIME_WINDOW_HOURS,
-        nextReset: nextReset.toISOString(),
-        resetIn: this.getTimeUntilReset()
+        nextReset: nextAllowedTime?.toISOString() || null,
+        resetIn,
+        recentUploads: recentUploads || []
       };
 
-      console.log('📊 Resultado del límite:', result);
+      console.log('📊 Resultado del límite de 1 hora:', result);
+      
+      if (recentUploads?.length > 0) {
+        console.log('📋 Uploads recientes encontrados:');
+        recentUploads.forEach((upload, index) => {
+          const uploadTime = new Date(upload.created_at);
+          const timeSince = Math.floor((Date.now() - uploadTime.getTime()) / (1000 * 60));
+          console.log(`   ${index + 1}. ${upload.namesticker} - hace ${timeSince} minutos`);
+        });
+      } else {
+        console.log('✅ No hay uploads en la última hora - puede subir');
+      }
+      
       return result;
 
     } catch (error) {
       console.error('❌ Error en checkDailyLimit:', error);
       
-      // En caso de error, asumir que puede subir (fail gracefully)
+      // En caso de error, no permitir upload por seguridad
       return {
-        uploadsInPeriod: 0,
-        canUpload: true,
-        remainingUploads: this.UPLOAD_LIMIT,
+        uploadsInPeriod: 999,
+        canUpload: false,
+        remainingUploads: 0,
         limit: this.UPLOAD_LIMIT,
         timeWindowHours: this.TIME_WINDOW_HOURS,
-        nextReset: new Date(Date.now() + (this.TIME_WINDOW_HOURS * 60 * 60 * 1000)).toISOString(),
-        resetIn: this.getTimeUntilReset(),
+        nextReset: null,
+        resetIn: 'Error - intenta más tarde',
         error: error.message
       };
     }
   }
 
   /**
-   * Obtiene el tiempo hasta el próximo reset en formato legible
-   * @returns {string} Tiempo formateado (ej: "5h 23m")
+   * Obtiene el tiempo restante hasta el próximo reset
+   * @returns {Object} Información sobre el tiempo hasta el reset
    */
   getTimeUntilReset() {
-    // Para simplicidad, calculamos desde "ahora"
-    // En una implementación más sofisticada, podríamos usar el upload más antiguo
+    // Por simplicidad, asumimos que el reset es en la próxima hora
     const resetTime = new Date(Date.now() + (this.TIME_WINDOW_HOURS * 60 * 60 * 1000));
-    const now = new Date();
-    const diffMs = resetTime - now;
+    const timeLeft = resetTime.getTime() - Date.now();
     
-    const hours = Math.floor(diffMs / (1000 * 60 * 60));
-    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
     
-    if (hours > 0) {
-      return `${hours}h ${minutes}m`;
-    } else {
-      return `${minutes}m`;
-    }
+    return {
+      hours,
+      minutes,
+      resetTime: resetTime.toISOString(),
+      timeLeft
+    };
   }
 
   /**
-   * Incrementa el contador de uploads (se llama después de un upload exitoso)
-   * Nota: No necesitamos hacer nada aquí ya que el insert en 'stickers' 
-   * automáticamente actualiza el conteo
+   * Incrementa el contador de uploads (esto se maneja automáticamente con la DB)
    * @param {string} userId - ID del usuario
    */
   async incrementUploadCount(userId) {
-    console.log('✅ Upload registrado para usuario:', userId);
-    // El conteo se actualiza automáticamente con el nuevo registro en 'stickers'
-    return true;
+    // En nuestro caso, esto se maneja automáticamente cuando se guarda el sticker
+    // en la base de datos con la timestamp actual
+    console.log('📈 Upload count será incrementado automáticamente al guardar en DB');
   }
 
   /**
-   * Verifica si un usuario puede hacer un upload antes de proceder
+   * Verifica si el usuario puede hacer upload de un sticker
    * @param {string} userId - ID del usuario
-   * @returns {Promise<boolean>} True si puede subir, false si no
+   * @returns {Promise<boolean>} true si puede hacer upload
    */
   async canUserUpload(userId) {
-    const limitData = await this.checkDailyLimit(userId);
-    return limitData.canUpload;
+    const limitInfo = await this.checkDailyLimit(userId);
+    return limitInfo.canUpload;
   }
 
   /**
-   * Obtiene información detallada del límite para mostrar en UI
-   * @param {string} userId - ID del usuario
-   * @returns {Promise<Object>} Información completa del límite
+   * Obtiene información completa sobre los límites del usuario
+   * @param {string} userId - ID del usuario  
+   * @returns {Promise<Object>} Información completa sobre límites
    */
   async getLimitInfo(userId) {
     return await this.checkDailyLimit(userId);
