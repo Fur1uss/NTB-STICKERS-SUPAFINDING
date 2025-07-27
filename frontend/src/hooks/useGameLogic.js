@@ -384,112 +384,21 @@ export const useGameLogic = (userId) => {
   }, [gameState]);
 
   /**
-   * Manejar click en sticker
-   */
-  const handleStickerClick = useCallback(async (sticker, event) => {
-    if (gameState !== 'playing' || !targetSticker) return;
-
-    console.log('\n🎯 === CLICK EN STICKER ===');
-    console.log('📝 Sticker clickeado:', {
-      id: sticker.id,
-      name: sticker.name,
-      dbSticker: sticker.dbSticker
-    });
-    console.log('📝 Sticker objetivo actual:', {
-      id: targetSticker.id,
-      name: targetSticker.namesticker,
-      description: targetSticker.descriptionsticker
-    });
-    console.log('🔍 Comparando IDs:', sticker.id, '===', targetSticker.id);
-
-    // Verificar si es el sticker objetivo
-    if (sticker.id === targetSticker.id) {
-      console.log('✅ ¡MATCH! Este es el sticker correcto');
-      console.log('🎉 Procediendo a registrar el sticker encontrado...');
-
-      try {
-        // Registrar sticker en el backend
-        const result = await GameAPIService.addStickerToGame(gameId, sticker.id);
-        
-        if (result.success !== false) {
-          // Agregar al array local
-          setFoundStickers(prev => {
-            if (!prev.includes(sticker.id)) {
-              return [...prev, sticker.id];
-            }
-            return prev;
-          });
-
-          // Agregar tiempo bonus (5 segundos)
-          setTimeBonus(prev => prev + 5);
-          setTimeRemaining(prev => prev + 5);
-
-          // Mostrar feedback de éxito
-          setFoundStickerName(targetSticker.descriptionsticker || targetSticker.namesticker);
-          setShowSuccess(true);
-
-          // Establecer nuevo objetivo
-          if (result.nextTarget) {
-            setTargetSticker(result.nextTarget);
-          }
-
-          // Limpiar mensaje de éxito después de 2 segundos
-          if (successTimeoutRef.current) {
-            clearTimeout(successTimeoutRef.current);
-          }
-          successTimeoutRef.current = setTimeout(() => {
-            setShowSuccess(false);
-          }, 2000);
-
-        } else if (result.alreadyFound) {
-          console.log('⚠️ Sticker ya encontrado anteriormente');
-          // Mostrar feedback visual
-          showIncorrectFeedback(event.target);
-        }
-
-      } catch (error) {
-        console.error('❌ Error registrando sticker:', error);
-        showIncorrectFeedback(event.target);
-      }
-
-    } else {
-      console.log('❌ STICKER INCORRECTO');
-      console.log('🔍 Detalles de la comparación:');
-      console.log('   - ID del sticker clickeado:', sticker.id, '(type:', typeof sticker.id, ')');
-      console.log('   - ID del sticker objetivo:', targetSticker.id, '(type:', typeof targetSticker.id, ')');
-      console.log('   - Nombres: clickeado =', sticker.name, '| objetivo =', targetSticker.namesticker);
-      showIncorrectFeedback(event.target);
-    }
-  }, [gameState, targetSticker, gameId]);
-
-  /**
-   * Mostrar feedback visual para sticker incorrecto
-   */
-  const showIncorrectFeedback = useCallback((element) => {
-    if (!element) return;
-    
-    element.style.filter = 'sepia(100%) saturate(200%) hue-rotate(0deg) brightness(0.8)';
-    element.style.transform += ' scale(0.9)';
-    
-    setTimeout(() => {
-      element.style.filter = '';
-      element.style.transform = element.style.transform.replace(' scale(0.9)', '');
-    }, 300);
-  }, []);
-
-  /**
    * Mezclar/reordenar stickers aleatoriamente
+   * MODIFICADO: Incluye todos los stickers, incluso los encontrados
    */
   const shuffleStickers = useCallback(() => {
     if (gameState !== 'playing') return;
 
     console.log('🔀 MEZCLANDO STICKERS');
+    console.log('📊 Stickers encontrados:', foundStickers.length);
+    console.log('🎯 Incluyendo stickers encontrados en la mezcla');
     
     setStickerImages(prevStickers => {
       const shuffledStickers = [...prevStickers];
       const placedStickers = [];
 
-      // Reasignar posiciones aleatorias a cada sticker
+      // Reasignar posiciones aleatorias a cada sticker (incluyendo encontrados)
       shuffledStickers.forEach(sticker => {
         let attempts = 0;
         let x, y, hasCollision;
@@ -523,9 +432,109 @@ export const useGameLogic = (userId) => {
         placedStickers.push({ x, y, scale: sticker.scale });
       });
 
+      console.log('✅ Stickers mezclados exitosamente');
       return shuffledStickers;
     });
-  }, [gameState]);
+  }, [gameState, foundStickers.length]);
+
+  /**
+   * Manejar click en sticker
+   * MODIFICADO: Los stickers no se deshabilitan al ser encontrados
+   */
+  const handleStickerClick = useCallback(async (sticker, event) => {
+    if (gameState !== 'playing' || !targetSticker) return;
+
+    console.log('\n🎯 === CLICK EN STICKER ===');
+    console.log('📝 Sticker clickeado:', {
+      id: sticker.id,
+      name: sticker.name,
+      dbSticker: sticker.dbSticker
+    });
+    console.log('📝 Sticker objetivo actual:', {
+      id: targetSticker.id,
+      name: targetSticker.namesticker,
+      description: targetSticker.descriptionsticker
+    });
+    console.log('🔍 Comparando IDs:', sticker.id, '===', targetSticker.id);
+
+    // Verificar si es el sticker objetivo
+    if (sticker.id === targetSticker.id) {
+      console.log('✅ ¡MATCH! Este es el sticker correcto');
+      console.log('🎉 Procediendo a registrar el sticker encontrado...');
+
+      try {
+        // Registrar sticker en el backend
+        const result = await GameAPIService.addStickerToGame(gameId, sticker.id);
+        
+        if (result.success !== false) {
+          // Agregar al array local para conteo (pero no deshabilitar visualmente)
+          setFoundStickers(prev => {
+            if (!prev.includes(sticker.id)) {
+              return [...prev, sticker.id];
+            }
+            return prev;
+          });
+
+          // Agregar tiempo bonus (5 segundos)
+          setTimeBonus(prev => prev + 5);
+          setTimeRemaining(prev => prev + 5);
+
+          // Mostrar feedback de éxito
+          setFoundStickerName(targetSticker.descriptionsticker || targetSticker.namesticker);
+          setShowSuccess(true);
+
+          // Establecer nuevo objetivo (puede ser el mismo sticker)
+          if (result.nextTarget) {
+            setTargetSticker(result.nextTarget);
+          }
+
+          // 🔄 MEZCLAR STICKERS INMEDIATAMENTE DESPUÉS DE ENCONTRAR UNO
+          console.log('🔄 Llamando a shuffleStickers() después de encontrar sticker...');
+          shuffleStickers();
+
+          // Limpiar mensaje de éxito después de 2 segundos
+          if (successTimeoutRef.current) {
+            clearTimeout(successTimeoutRef.current);
+          }
+          successTimeoutRef.current = setTimeout(() => {
+            setShowSuccess(false);
+          }, 2000);
+
+        } else if (result.alreadyFound) {
+          console.log('⚠️ Sticker ya encontrado anteriormente');
+          // Mostrar feedback visual
+          showIncorrectFeedback(event.target);
+        }
+
+      } catch (error) {
+        console.error('❌ Error registrando sticker:', error);
+        showIncorrectFeedback(event.target);
+      }
+
+    } else {
+      console.log('❌ STICKER INCORRECTO');
+      console.log('🔍 Detalles de la comparación:');
+      console.log('   - ID del sticker clickeado:', sticker.id, '(type:', typeof sticker.id, ')');
+      console.log('   - ID del sticker objetivo:', targetSticker.id, '(type:', typeof targetSticker.id, ')');
+      console.log('   - Nombres: clickeado =', sticker.name, '| objetivo =', targetSticker.namesticker);
+      showIncorrectFeedback(event.target);
+    }
+  }, [gameState, targetSticker, gameId, shuffleStickers]);
+
+  /**
+   * Mostrar feedback visual para sticker incorrecto
+   */
+  const showIncorrectFeedback = useCallback((element) => {
+    if (!element) return;
+    
+    element.style.filter = 'sepia(100%) saturate(200%) hue-rotate(0deg) brightness(0.8)';
+    element.style.transform += ' scale(0.9)';
+    
+    setTimeout(() => {
+      element.style.filter = '';
+      element.style.transform = element.style.transform.replace(' scale(0.9)', '');
+    }, 300);
+  }, []);
 
   /**
    * Reiniciar juego

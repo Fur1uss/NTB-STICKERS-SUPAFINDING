@@ -140,6 +140,7 @@ export class GameService {
       console.log('✅ Sticker verificado:', sticker.namesticker);
 
       // 3. Verificar que el sticker no ha sido encontrado antes en esta partida
+      // MODIFICADO: Permitir que los stickers se repitan como objetivos
       console.log('\n🔄 PASO 3: Verificando duplicados...');
       const { data: existingRecord, error: checkError } = await supabase
         .from('stickersongame')
@@ -152,13 +153,10 @@ export class GameService {
         throw checkError;
       }
 
+      // MODIFICACIÓN: Ya no bloqueamos stickers repetidos, solo los registramos
       if (existingRecord && existingRecord.length > 0) {
-        console.log('⚠️  Sticker ya encontrado anteriormente en esta partida');
-        return {
-          success: false,
-          message: 'Sticker ya encontrado',
-          alreadyFound: true
-        };
+        console.log('⚠️  Sticker ya encontrado anteriormente en esta partida, pero permitiendo repetición');
+        // No retornamos error, continuamos con el proceso
       }
 
       // 4. Registrar el sticker en la partida
