@@ -1,0 +1,24 @@
+.shuffle-button  {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: transparent!important;
+
+  width: 18%;
+  height: auto;
+
+  position: absolute;
+
+    top: 48%;
+    left: 80%;
+
+}
+
+.shuffle-button:hover {
+  transform: translateY(-2px);
+
+    filter: drop-shadow(0 0 0 white)
+    drop-shadow(1px 0 0 white)
+    drop-shadow(-3px 0 0 white)
+    drop-shadow(0 3px 0 white)
+    drop-shadow(0 -3px 0 white);
+}

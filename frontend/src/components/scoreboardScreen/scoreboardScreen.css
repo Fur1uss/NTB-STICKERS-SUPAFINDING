@@ -1,0 +1,618 @@
+.scoreboard-screen{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.scoreboardContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 100%;
+}
+.informationContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 100%;
+
+}
+
+.infoUserGameContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 50%;
+
+
+}
+
+.infoUserGameContainer p{
+    font-family: 'Fredericka the Great', cursive;
+    font-size: 1.5rem;
+    color: white;    
+    margin: 0;
+    padding: 0;
+}
+
+.infoUserScore{
+    font-size: clamp(2rem, 3vw, 3rem)!important;
+    color: #CACF3E!important; /* Gold color for score */
+    margin: 20px!important;
+    padding: 0;
+}
+
+.sticker_scoreboard_01{
+    width: 50%;
+    height: auto;
+    transform: scaleX(-1);
+    rotate: 45deg;
+
+    top: -5%;
+    left: -50%;
+
+    position: absolute;
+}
+
+.sticker_scoreboard_02{
+    width: 50%;
+    height: auto;
+    transform: scaleX(-1);
+    rotate: -45deg;
+
+    top: -20%;
+    left: -70%;
+
+    position: absolute;
+}
+
+.buttonsContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 50%;
+    gap: 25px;
+
+}
+
+.scoreTitleContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 20%;
+    margin-left: 20%;
+}
+
+.scoreTitleContainer img{
+    width: 100%;
+    height: auto;
+}
+
+.infoUserSubtitle{
+    font-size: clamp(1.5rem, 2vw, 2.4rem)!important;
+    color: white;
+}
+
+.scoreboardElementContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 95%;
+    height: 75%;
+
+    margin-left: 30%;
+}
+
+/* Scroll Container Styles */
+.scrollContainer {
+    width: 90%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+/* Scroll bar styling */
+.scrollContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollContainer::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.scrollContainer::-webkit-scrollbar-thumb {
+    background: #CACF3E;
+    border-radius: 10px;
+}
+
+.scrollContainer::-webkit-scrollbar-thumb:hover {
+    background: #b8bd35;
+}
+
+/* Scoreboard Item Styles */
+.scoreboardItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+}
+
+.scoreboardItem:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.rankPosition {
+    font-family: 'Fredericka the Great', cursive;
+    font-size: 1.8rem;
+    color: #CACF3E;
+    font-weight: bold;
+    min-width: 60px;
+    text-align: center;
+}
+
+.playerInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    margin: 0 20px;
+}
+
+.playerName {
+    font-family: 'Fredericka the Great', cursive;
+    font-size: 1.4rem;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.playerScore {
+    font-family: 'Fredericka the Great', cursive;
+    font-size: 1.2rem;
+    color: #CACF3E;
+    font-weight: bold;
+}
+
+.gameTime {
+    font-family: 'Fredericka the Great', cursive;
+    font-size: 1.2rem;
+    color: #ccc;
+    min-width: 80px;
+    text-align: center;
+}
+
+.noData {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: 'Fredericka the Great', cursive;
+    font-size: 1.2rem;
+    margin-top: 50px;
+}
+
+/* Estilos para estados de carga y error */
+.loading-container,
+.error-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+    padding: 20px;
+    color: white;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #4CAF50;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+.error-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.error-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.retry-button,
+.home-button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-family: 'Fredericka the Great', cursive;
+}
+
+.retry-button:hover,
+.home-button:hover {
+    background: #45a049;
+}
+
+/* Estilos para el ranking */
+.ranking-title {
+    font-family: 'Fredericka the Great', cursive;
+    font-size: 1.8rem;
+    color: #CACF3E;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.ranking-list {
+    width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+/* Estilos personalizados para la barra de scroll del ranking */
+.ranking-list::-webkit-scrollbar {
+    width: 12px;
+}
+
+.ranking-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+.ranking-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #CACF3E, #b8bd35);
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.ranking-list::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #d4d943, #CACF3E);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.ranking-list::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, #b8bd35, #a6ab30);
+}
+
+
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.ranking-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.ranking-item.current-user {
+    background: rgba(202, 207, 62, 0.2);
+    border: 2px solid #CACF3E;
+}
+
+.position {
+    font-family: 'Fredericka the Great', cursive;
+    font-size: 1.4rem;
+    color: #CACF3E;
+    font-weight: bold;
+    min-width: 50px;
+}
+
+.username {
+    font-family: 'Fredericka the Great', cursive;
+    font-size: 1.2rem;
+    color: white;
+    flex: 1;
+    text-align: center;
+}
+
+.score {
+    font-family: 'Fredericka the Great', cursive;
+    font-size: 1.2rem;
+    color: #CACF3E;
+    font-weight: bold;
+    min-width: 80px;
+    text-align: right;
+}
+
+.user-position-info {
+    text-align: center;
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(202, 207, 62, 0.1);
+    border-radius: 8px;
+}
+
+.user-position-info p {
+    font-family: 'Fredericka the Great', cursive;
+    font-size: 1.1rem;
+    color: #CACF3E;
+    margin: 0;
+}
+
+/* Estilos para stickers encontrados */
+.stickersContainer {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.stickers-title {
+    font-family: 'Fredericka the Great', cursive;
+    font-size: 1.5rem;
+    color: white;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.found-stickers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.found-sticker-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.found-sticker-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.found-sticker-image {
+    width: 100%;
+    height: auto;
+    max-width: 60px;
+    max-height: 60px;
+    object-fit: contain;
+}
+
+.more-stickers {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(202, 207, 62, 0.2);
+    border-radius: 8px;
+    padding: 10px;
+    font-family: 'Fredericka the Great', cursive;
+    font-size: 1rem;
+    color: #CACF3E;
+    font-weight: bold;
+}
+
+/* Estilos para estadísticas del juego */
+.game-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    height: auto;
+    max-width: 300px;
+    margin-left: 90px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+
+    width: 90%;
+    height: auto;
+}
+
+.stat-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.stat-item.highlight {
+    background: rgba(202, 207, 62, 0.2);
+    border: 2px solid #CACF3E;
+}
+
+.stat-label {
+    font-family: 'Fredericka the Great', cursive;
+    font-size: clamp(1rem, 2vw, 1.1rem);
+    color: white;
+}
+
+.stat-value {
+    font-family: 'Fredericka the Great', cursive;
+    font-size: clamp(1rem, 2vw, 1rem);
+    color: #CACF3E;
+    font-weight: bold;
+}
+
+/* Estilos para botones de acción */
+.action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 10px;
+    width: 60%;
+    height: 50%;
+    margin-left: 60px;
+}
+
+.action-button:hover {
+    transform: scale(1.05);
+}
+
+.action-button img {
+    width: 100%;
+    height: auto;
+}
+
+.action-button span {
+    font-family: 'Fredericka the Great', cursive;
+    font-size: 1.1rem;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Estilos específicos para el botón de upload */
+.action-button.upload-sticker {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    border-radius: 25px;
+    padding: 12px 24px;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    min-width: 200px;
+}
+
+.action-button.upload-sticker:hover {
+    background: linear-gradient(135deg, #45a049, #4CAF50);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.action-button.upload-sticker img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    max-width: 24px;
+}
+
+/* Animaciones */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Mensaje no invasivo para contenido inapropiado */
+.inappropriate-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2000;
+  animation: slideInRight 0.5s ease-out;
+}
+
+.inappropriate-message-content {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+  max-width: 350px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.inappropriate-icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.inappropriate-message-content h3 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.inappropriate-message-content p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.inappropriate-message-content p:last-child {
+  margin-bottom: 0;
+}
+
+.inappropriate-suggestion {
+  font-size: 13px !important;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+.inappropriate-message-content strong {
+  color: #ffeaa7;
+  font-weight: 600;
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive para el mensaje */
+@media (max-width: 768px) {
+  .inappropriate-message {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+  }
+  
+  .inappropriate-message-content {
+    max-width: none;
+    padding: 15px;
+  }
+  
+  .inappropriate-message-content h3 {
+    font-size: 16px;
+  }
+  
+  .inappropriate-message-content p {
+    font-size: 13px;
+  }
+}
+
+

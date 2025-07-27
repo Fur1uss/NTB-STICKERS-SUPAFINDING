@@ -1,0 +1,217 @@
+/* OrientationGuard.css - Componente de bloqueo de orientación */
+/* Overlay que bloquea interacciones */
+.orientation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  pointer-events: all;
+  user-select: none;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.orientation-guard {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000000; /* Fondo negro puro */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  color: white;
+  font-family: 'Fredericka the Great', cursive;
+}
+
+.orientation-message {
+  text-align: center;
+  padding: 2rem;
+  max-width: 90%;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.orientation-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-20px); }
+  60% { transform: translateY(-10px); }
+}
+
+.orientation-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 1.5rem;
+  color: #FFD700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.orientation-content {
+  margin-bottom: 2rem;
+}
+
+.orientation-description {
+  font-size: clamp(1.1rem, 3vw, 1.4rem);
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+
+.current-resolution {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.current-resolution p {
+  margin: 0.5rem 0;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+}
+
+.resolution-text {
+  color: #FFB6C1;
+  font-weight: bold;
+}
+
+.ratio-text {
+  color: #FFA07A;
+  font-weight: bold;
+}
+
+.target-ratio {
+  color: #98FB98;
+  font-weight: bold;
+}
+
+.orientation-instructions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.instruction-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.8rem;
+  border-radius: 10px;
+  border-left: 4px solid #FFD700;
+}
+
+.instruction-icon {
+  font-size: 1.5rem;
+  min-width: 2rem;
+}
+
+.orientation-animation {
+  margin-top: 2rem;
+}
+
+.device-rotate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.device {
+  width: 40px;
+  height: 60px;
+  border: 3px solid white;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.device.horizontal {
+  width: 60px;
+  height: 40px;
+}
+
+.device::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  height: 70%;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.arrow {
+  font-size: 2rem;
+  color: #FFD700;
+  animation: rotate 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(90deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .orientation-message {
+    padding: 1rem;
+  }
+  
+  .orientation-instructions {
+    gap: 0.6rem;
+  }
+  
+  .instruction-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .device-rotate {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .orientation-icon {
+    font-size: 3rem;
+  }
+  
+  .current-resolution {
+    padding: 0.8rem;
+  }
+  
+  .current-resolution p {
+    font-size: 0.85rem;
+  }
+}

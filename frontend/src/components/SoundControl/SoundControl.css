@@ -1,0 +1,126 @@
+/* SoundControl.css - Control de audio del juego */
+
+.sound-control-button {
+  position: fixed;
+  top: 2%;
+  left: 1%;
+  z-index: 1000;
+  
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  padding: 10px 16px;
+  
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  
+  /* Evitar selección del texto */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.sound-control-button:hover {
+  background: rgba(0, 0, 0, 0.8);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
+}
+
+.sound-control-button:active {
+  transform: scale(0.95);
+}
+
+/* Estados del botón */
+.sound-control-button.unmuted {
+  border-color: rgba(102, 255, 102, 0.5);
+}
+
+.sound-control-button.unmuted:hover {
+  border-color: rgba(102, 255, 102, 0.8);
+  box-shadow: 0 0 15px rgba(102, 255, 102, 0.3);
+}
+
+.sound-control-button.muted {
+  border-color: rgba(255, 102, 102, 0.5);
+}
+
+.sound-control-button.muted:hover {
+  border-color: rgba(255, 102, 102, 0.8);
+  box-shadow: 0 0 15px rgba(255, 102, 102, 0.3);
+}
+
+/* Icono del sonido */
+.sound-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.sound-icon svg {
+  transition: all 0.3s ease;
+}
+
+.sound-control-button.unmuted .sound-icon {
+  color: #66ff66;
+}
+
+.sound-control-button.muted .sound-icon {
+  color: #ff6666;
+}
+
+/* Texto del botón */
+.sound-text {
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
+}
+
+/* Responsivo - Ocultar texto en pantallas pequeñas */
+@media (max-width: 768px) {
+  .sound-control-button {
+    padding: 10px;
+    top: 15px;
+    right: 15px;
+  }
+  
+  .sound-text {
+    display: none;
+  }
+}
+
+/* Animación de pulso cuando está mutado */
+.sound-control-button.muted {
+  animation: mutePulse 2s infinite;
+}
+
+@keyframes mutePulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Hover en dispositivos táctiles */
+@media (hover: none) {
+  .sound-control-button:hover {
+    transform: none;
+    background: rgba(0, 0, 0, 0.7);
+  }
+  
+  .sound-control-button:active {
+    transform: scale(0.95);
+    background: rgba(0, 0, 0, 0.9);
+  }
+}

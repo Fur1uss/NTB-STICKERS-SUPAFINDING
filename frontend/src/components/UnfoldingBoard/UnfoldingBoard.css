@@ -1,0 +1,103 @@
+.unfolding-board {
+  position: fixed;
+  top: 0%;
+  left: 50%;
+  transform: translateX(-64.6%) translateY(-100%) scale(0.9);
+  width: 70vw;
+  height: 90vh;
+  overflow: hidden;
+  background: url('/loadingScreen.webp') center/cover no-repeat;
+  z-index: 1000;
+  opacity: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.unfolding-board.open {
+  animation: unfoldingBoardEnter 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.unfolding-board.closing {
+  animation: unfoldingBoardExit 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Animación de entrada */
+@keyframes unfoldingBoardEnter {
+  0% {
+    transform: translateX(-64.6%) translateY(-100%) scale(0.9);
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-64.6%) translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Animación de salida */
+@keyframes unfoldingBoardExit {
+  0% {
+    transform: translateX(-64.6%) translateY(0) scale(1);
+    opacity: 1;
+  }
+  20% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-64.6%) translateY(-100%) scale(0.9);
+    opacity: 1;
+  }
+}
+
+.unfolding-board-content {
+  padding: 0;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.6s 0.6s ease-out, transform 0.6s 0.6s ease-out;
+  width: 87%;
+  height: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unfolding-board.open .unfolding-board-content {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.unfolding-board.closing .unfolding-board-content {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+} 
+
+.unfolding-board-close{
+  position: absolute;
+  top: -8%;
+  right: -2%;
+  width: 4vw!important;
+  height: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
