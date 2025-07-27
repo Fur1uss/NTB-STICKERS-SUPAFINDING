@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import moderationService from '../../services/moderationService.js';
+import ModerationService from '../../services/imageModeration.js';
 import './ModerationCheck.css';
+
+const moderationService = new ModerationService();
 
 const ModerationCheck = ({ file, onModerationComplete, onClose, onUploadSuccess }) => {
   const navigate = useNavigate();
@@ -30,17 +32,14 @@ const ModerationCheck = ({ file, onModerationComplete, onClose, onUploadSuccess 
     }
   }, [file, hasNotified]);
 
-  // Efecto para redirección automática cuando la imagen es aprobada
+  // Efecto para countdown cuando la imagen es aprobada (sin redirección automática)
   useEffect(() => {
     if (status === 'success') {
-      // Iniciar countdown de 3 segundos
+      // Solo mostrar countdown, el componente padre manejará el cierre
       const countdownInterval = setInterval(() => {
         setRedirectCountdown(prev => {
           if (prev <= 1) {
             clearInterval(countdownInterval);
-            // Redireccionar a la página principal
-            console.log('🏠 Redirigiendo a la página principal...');
-            navigate('/');
             return 0;
           }
           return prev - 1;
@@ -52,7 +51,7 @@ const ModerationCheck = ({ file, onModerationComplete, onClose, onUploadSuccess 
         clearInterval(countdownInterval);
       };
     }
-  }, [status, navigate]);
+  }, [status]);
 
   /**
    * Realiza la moderación de la imagen
@@ -91,8 +90,12 @@ const ModerationCheck = ({ file, onModerationComplete, onClose, onUploadSuccess 
 
       if (moderationResult.isAppropriate) {
         setStatus('success');
-        // NO llamar onModerationComplete aquí para evitar cerrar el UnfoldingBoard
-        // La redirección se manejará automáticamente
+        // Notificar al componente padre que la imagen es apropiada para proceder con upload
+        if (!hasNotified) {
+          console.log('📞 Notificando resultado de moderación (apropiada) al componente padre');
+          setHasNotified(true);
+          onModerationComplete(moderationResult);
+        }
       } else {
         setStatus('inappropriate');
         // Solo notificar al componente padre si NO es apropiada
