@@ -1,16 +1,22 @@
 import React, { useState, useRef } from 'react';
-import uploadService from '../../services/uploadService.js';
 import './UploadStickerSimple.css';
 
-const UploadStickerSimple = ({ userId, onUploadSuccess, onClose }) => {
+const UploadStickerSimple = ({ userId, onUploadStart, onClose }) => {
   const [file, setFile] = useState(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [preview, setPreview] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const fileInputRef = useRef(null);
+
+  /**
+   * Resetea todos los estados de control
+   */
+  const resetControlStates = () => {
+    setIsSubmitting(false);
+  };
 
   /**
    * Maneja la selección de archivo
@@ -43,6 +49,9 @@ const UploadStickerSimple = ({ userId, onUploadSuccess, onClose }) => {
 
     setFile(selectedFile);
     setError('');
+    
+    // Resetear estados de control al cambiar archivo
+    resetControlStates();
 
     // Crear preview
     const reader = new FileReader();
@@ -58,31 +67,40 @@ const UploadStickerSimple = ({ userId, onUploadSuccess, onClose }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     
+    // Prevenir múltiples submits
+    if (isSubmitting) {
+      return;
+    }
+    
     if (!file || !name.trim() || !description.trim()) {
       setError('Todos los campos son obligatorios');
       return;
     }
 
-    setLoading(true);
-    setError('');
-
-    try {
-      const result = await uploadService.uploadSticker(file, name.trim(), description.trim(), userId);
-      console.log('✅ Upload exitoso:', result);
-      onUploadSuccess(result);
-    } catch (error) {
-      console.error('❌ Error en upload:', error);
-      setError(error.message || 'Error subiendo sticker');
-    } finally {
-      setLoading(false);
+    // Marcar como enviando para prevenir múltiples clicks
+    setIsSubmitting(true);
+    
+    // Iniciar proceso de moderación
+    if (onUploadStart) {
+      onUploadStart({
+        file,
+        name: name.trim(),
+        description: description.trim(),
+        userId
+      });
     }
+    
+    // No resetear isSubmitting aquí, se reseteará cuando se cierre el UnfoldingBoard
   };
+
+
+
+
 
   return (
     <div className="upload-sticker-overlay">
       <div className="upload-sticker-container">
-
-        <form className="upload-form" onSubmit={handleSubmit}>
+        <form className="upload-form" onSubmit={handleSubmit} noValidate>
             <div className='name-description-container'>
                 <div className="form-group">
                   <label htmlFor="name" className="form-label">
@@ -93,9 +111,9 @@ const UploadStickerSimple = ({ userId, onUploadSuccess, onClose }) => {
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="form-input"
-                    disabled={loading}
-                    placeholder="Ingresa el nombre del sticker"
+                                         className="form-input"
+                     disabled={isSubmitting}
+                     placeholder="Ingresa el nombre del sticker"
                   />
                 </div>
 
@@ -107,9 +125,9 @@ const UploadStickerSimple = ({ userId, onUploadSuccess, onClose }) => {
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="form-textarea"
-                    disabled={loading}
-                    placeholder="Describe tu sticker"
+                                         className="form-textarea"
+                     disabled={isSubmitting}
+                     placeholder="Describe tu sticker"
                   />
                 </div>
             </div>
@@ -126,15 +144,15 @@ const UploadStickerSimple = ({ userId, onUploadSuccess, onClose }) => {
                     ref={fileInputRef}
                     onChange={handleFileChange}
                     accept=".png"
-                    className="file-input-hidden"
-                    disabled={loading}
-                    style={{ display: 'none' }}
+                                         className="file-input-hidden"
+                     disabled={isSubmitting}
+                     style={{ display: 'none' }}
                   />
                   
                   {/* Imagen clickeable que activa el selector de archivos */}
-                  <div 
-                    className={`file-upload-button ${loading ? 'disabled' : ''}`}
-                    onClick={() => !loading && fileInputRef.current?.click()}
+                                     <div 
+                     className={`file-upload-button ${isSubmitting ? 'disabled' : ''}`}
+                     onClick={() => !isSubmitting && fileInputRef.current?.click()}
                   >
                     <img 
                       src={preview || "/emptySticker.webp"} 
@@ -157,9 +175,12 @@ const UploadStickerSimple = ({ userId, onUploadSuccess, onClose }) => {
                     
                     <img 
                         src="/uploadSimpleButton.webp" 
-                        alt={loading ? 'Subiendo...' : 'Subir Sticker'}
-                        onClick={handleSubmit}
-                        className={`upload-button ${loading || !file || !name.trim() || !description.trim() ? 'disabled' : ''}`}
+                                                 alt={isSubmitting ? 'Subiendo...' : 'Subir Sticker'}
+                         onClick={(e) => {
+                           e.preventDefault();
+                           handleSubmit(e);
+                         }}
+                         className={`upload-button ${isSubmitting || !file || !name.trim() || !description.trim() ? 'disabled' : ''}`}
                     />
                 </div>
           </div>
