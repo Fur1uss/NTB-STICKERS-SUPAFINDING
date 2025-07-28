@@ -1,11 +1,8 @@
-<img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/b333368d-3b07-4284-9452-07cd14344589" /># 🎮 NTB Stickers SupaFinding
+<img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/b333368d-3b07-4284-9452-07cd14344589" />
 
-> A competitive sticker hunting game built for **Supabase Launch Week 15 Hackathon** — discover, collect, and compete with digital stickers in real-world locations!
+## NTB STICKER SUPAFINDING
 
-![NTB Preview](<img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/f6cf5756-86ed-4648-b595-22cee2261839" />
-) 
-
-[Live Demo](https://ntb-stickers-supafinding.vercel.app) | [GitHub Repo](https://github.com/Fur1uss/NTB-STICKERS-SUPAFINDING)
+[Live Demo💚](https://ntb-stickers-supafinding.vercel.app) | [GitHub Repo🤖](https://github.com/Fur1uss/NTB-STICKERS-SUPAFINDING)
 
 ---
 
@@ -28,9 +25,7 @@
 
 ---
 
-## 📽️ Demo
-
-![Gameplay Preview](https://imgur.com/a/zBmqsxz)
+## 📽️ [Video Demo](https://youtu.be/qN6AjjwQhHA)
 
 ---
 
