@@ -22,6 +22,9 @@ class UploadService {
       throw new Error('No hay sesión activa');
     }
     
+    // Actualizar el token en localStorage
+    localStorage.setItem('accessToken', session.access_token);
+    
     return session.access_token;
   }
 
