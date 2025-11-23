@@ -2,23 +2,16 @@
   "name": "ntb-sticker-supafinding",
   "private": true,
   "version": "1.0.0",
-  "description": "NTB Sticker Supafinding - Full Stack Application",
+  "description": "NTB Sticker Supafinding - React App with Supabase",
   "type": "module",
   "scripts": {
-    "dev": "npm run dev:frontend",
-    "dev:frontend": "cd frontend && npm run dev",
-    "dev:vercel": "vercel dev",
-    "dev:full": "concurrently --names \"VERCEL,FRONTEND\" --prefix-colors \"blue,green\" \"npm run dev:vercel\" \"npm run dev:frontend\"",
-    "vercel:login": "vercel login",
+    "dev": "cd app && npm run dev",
     "start": "npm run dev",
-    "build": "cd frontend && npm run build",
-    "build:frontend": "cd frontend && npm run build",
-    "install:frontend": "cd frontend && npm install",
-    "install:all": "npm run install:frontend"
+    "build": "cd app && npm run build",
+    "install": "cd app && npm install"
   },
   "workspaces": [
-    "frontend",
-    "backend"
+    "app"
   ],
   "repository": {
     "type": "git",
