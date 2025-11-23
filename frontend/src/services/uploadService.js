@@ -1,6 +1,9 @@
 import supabase from '../config/supabaseClient.js';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// Usar rutas relativas para Vercel (todo en el mismo dominio)
+// En desarrollo local, forzar rutas relativas (ignorar VITE_API_URL si apunta a Railway)
+const isLocalDev = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const API_BASE_URL = (isLocalDev ? '' : (import.meta.env.VITE_API_URL || ''));
 
 /**
  * Servicio para manejar la subida de stickers

@@ -3,15 +3,18 @@
   "private": true,
   "version": "1.0.0",
   "description": "NTB Sticker Supafinding - Full Stack Application",
+  "type": "module",
   "scripts": {
-    "dev": "concurrently --names \"BACKEND,FRONTEND\" --prefix-colors \"blue,green\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev": "npm run dev:frontend",
     "dev:frontend": "cd frontend && npm run dev",
-    "dev:backend": "cd backend && node server.js",
+    "dev:vercel": "vercel dev",
+    "dev:full": "concurrently --names \"VERCEL,FRONTEND\" --prefix-colors \"blue,green\" \"npm run dev:vercel\" \"npm run dev:frontend\"",
+    "vercel:login": "vercel login",
     "start": "npm run dev",
+    "build": "cd frontend && npm run build",
     "build:frontend": "cd frontend && npm run build",
     "install:frontend": "cd frontend && npm install",
-    "install:backend": "cd backend && npm install",
-    "install:all": "npm run install:frontend && npm run install:backend"
+    "install:all": "npm run install:frontend"
   },
   "workspaces": [
     "frontend",
@@ -24,6 +27,7 @@
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
+    "@supabase/supabase-js": "^2.52.1",
     "react-router-dom": "^7.7.1"
   },
   "devDependencies": {

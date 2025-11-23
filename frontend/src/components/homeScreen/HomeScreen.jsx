@@ -38,23 +38,42 @@ function HomeScreen() {
             console.log('Google Provider ID:', supabaseUser.user_metadata?.provider_id);
             console.log('Email:', supabaseUser.email);
             
-            await authService.checkBackendHealth();
+            // Verificar health check (en desarrollo local puede fallar, pero no bloquea)
+            try {
+                await authService.checkBackendHealth();
+            } catch (error) {
+                // En desarrollo local, ignorar error de health check
+                console.warn('Health check falló (normal en desarrollo local):', error.message);
+            }
             
-            const response = await authService.createOrGetUser();
-            
-            if (response.success) {
-                console.log('Usuario procesado exitosamente:', response.user.username);
-                console.log('DB ID:', response.user.id);
-                console.log('Google ID en DB:', response.user.googleId);
-                setBackendUser(response.user);
+            try {
+                const response = await authService.createOrGetUser();
                 
-                localStorage.setItem('backendUser', JSON.stringify(response.user));
-                
-                // El usuario está configurado, mostrar mensaje final
-                console.log('✅ Usuario configurado, botones de juego habilitados');
-                
-            } else {
-                throw new Error('Error en la respuesta del backend');
+                if (response.success) {
+                    console.log('Usuario procesado exitosamente:', response.user.username);
+                    console.log('DB ID:', response.user.id);
+                    console.log('Google ID en DB:', response.user.googleId);
+                    setBackendUser(response.user);
+                    
+                    localStorage.setItem('backendUser', JSON.stringify(response.user));
+                    
+                    // El usuario está configurado, mostrar mensaje final
+                    console.log('✅ Usuario configurado, botones de juego habilitados');
+                } else {
+                    throw new Error('Error en la respuesta del backend');
+                }
+            } catch (apiError) {
+                // Si el error es porque no hay backend en desarrollo local, mostrar mensaje más amigable pero no bloquear
+                if (apiError.message.includes('desarrollo local') || apiError.message.includes('no disponible')) {
+                    console.warn('⚠️ Backend no disponible en desarrollo local:', apiError.message);
+                    console.warn('💡 Para probar completamente, usa "npm run dev:full" o despliega en Vercel.');
+                    // No establecer error para no bloquear la UI, solo mostrar en consola
+                    // El usuario puede seguir usando el frontend, pero las funciones del juego no funcionarán
+                } else {
+                    // Para otros errores, sí mostrar el error
+                    setError(`Error procesando usuario: ${apiError.message}`);
+                    throw apiError;
+                }
             }
             
         } catch (error) {
