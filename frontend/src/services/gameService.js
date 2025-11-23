@@ -289,15 +289,19 @@ export class GameAPIService {
    * @returns {boolean} True si el servidor está funcionando
    */
   static async checkApiHealth() {
-    console.log('\n🔍 VERIFICANDO SALUD DE LA API');
-
     try {
-      const response = await fetch(`${API_BASE_URL}/health`, {
+      const response = await fetch(`${API_BASE_URL}/api/health`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         }
       });
+
+      // Verificar que la respuesta sea JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Respuesta no es JSON - API no disponible');
+      }
 
       const data = await response.json();
 
@@ -305,7 +309,6 @@ export class GameAPIService {
         throw new Error(`API no disponible: ${response.status}`);
       }
 
-      console.log('✅ API funcionando correctamente:', data.message);
       return true;
 
     } catch (error) {
